@@ -12,10 +12,10 @@
 
 <hr/>
 <h4 id="#objetivo"> 🚀 OBJETIVO </h3>
-<p> </p>
+<p>Criar um sistema gerenciador de tickts que facilita a entrada no Restaurante Universitário por meio de reconhecimento facial.</p>
 
 <h4 id="estrutura"> 🏗️ ESTRUTURA </h4>
-→ <span> planejamento: </span> <br>
+→ <span> scripts: Tabela do bando de dados</span> <br>
 → <span> api: </span>  <br>
 → <span> frontend: Parte de visualização de paginas feita em ReactJS</span>  <br>
 
@@ -35,6 +35,6 @@
 
 ```
 
-<h4 id="autor">Autor</h4>
+<h4 id="autor">Autores</h4>
 Kevin Cadena, Everson Coser e Lucas Belini <br>
 Feito com carinho 👋🏽 
