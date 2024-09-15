@@ -4,11 +4,15 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
+import Typography from "@mui/material/Typography";
 
 function CadAluno() {
   return (
     <Box>
       <Header />
+      <Box sx={{ textAlign: "center", marginTop: "20px" }}>
+        <Typography variant="h5"> Cadastro de Aluno </Typography>
+      </Box>
       <Box sx={{ marginTop: "20px", marginLeft: "20px", marginRight: "20px" }}>
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>

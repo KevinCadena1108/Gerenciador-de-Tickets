@@ -4,12 +4,15 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import Box from "@mui/material/Box";
 import Header from "../../components/Header";
+import Typography from "@mui/material/Typography";
 
 function PesqCli() {
   return (
     <Box>
       <Header />
-
+      <Box sx={{ textAlign: "center", marginTop: "20px" }}>
+        <Typography variant="h5"> Compra de tickts </Typography>
+      </Box>
       <Box sx={{ marginTop: "20px", marginLeft: "20px" }}>
         <FormControl sx={{ width: "200px" }} size="small">
           <InputLabel id="demo-select-small-label">
