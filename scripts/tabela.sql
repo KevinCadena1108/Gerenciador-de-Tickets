@@ -1,4 +1,0 @@
-/*
-Tabela do banco
-Evo se vira aqui
-*/
