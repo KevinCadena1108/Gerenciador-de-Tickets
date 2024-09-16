@@ -4,31 +4,34 @@ set datestyle to 'ISO,DMY';
 set client_encoding to 'UTF8';
 
 CREATE TABLE cliente (
-    cpf CHAR(11) NOT NULL,  -- Chave primária
-    nome VARCHAR(100) NOT NULL,
-    email VARCHAR(100) NOT NULL,
-    tel VARCHAR(15) NOT NULL,
-    dataNasc DATE NOT NULL,
-    especializacao_id INT NOT NULL,
-    qtdtic INT,
-    senha VARCHAR(255) NOT NULL,  -- Armazenar a senha gerada (hash da senha recomendável)
-    CONSTRAINT pk_cliente PRIMARY KEY (cpf),
-    CONSTRAINT uk_email_cliente UNIQUE (email),
-    CONSTRAINT fk_cliente_especializacao FOREIGN KEY (especializacao_id) REFERENCES especializacao (id)
+    id SERIAL PRIMARY KEY,
+    cpf CHAR(11) NOT NULL UNIQUE,
+    nome VARCHAR(128) NOT NULL,
+    email VARCHAR(320) NOT NULL,
+    telefone VARCHAR(20) NOT NULL,
+    nascimento DATE NOT NULL,
+    saldo DECIMAL(10, 2) NOT NULL DEFAULT 0.0,
+    senha VARCHAR(145) NOT NULL
 );
 
-CREATE TABLE especializacao (
-    id INT NOT NULL,  -- Não é SERIAL, controle manual do ID
-    tipo VARCHAR(50) NOT NULL,
-    preco DECIMAL(10, 2) NOT NULL,
-    CONSTRAINT pk_especializacao PRIMARY KEY (id),
-    CONSTRAINT uk_tipo_especializacao UNIQUE (tipo)
+CREATE TABLE categoria (
+    id INT PRIMARY KEY,  -- Não é SERIAL, controle manual do ID
+    nome varchar(64) NOT NULL UNIQUE,
+    valor DECIMAL(10, 2) NOT NULL    
 );
 
 CREATE TABLE matricula (
-    matricula INT NOT NULL,  -- Chave primária
-    dataAtiva DATE NOT NULL,
-    cpf VARCHAR(11) NOT NULL,  -- Chave estrangeira referenciando a tabela cliente
-    CONSTRAINT pk_matricula PRIMARY KEY (matricula),
-    CONSTRAINT fk_matricula_cliente FOREIGN KEY (cpf) REFERENCES cliente(cpf)
+    id SERIAL PRIMARY KEY,
+    matricula CHAR(11) UNIQUE,
+    ativo BOOLEAN NOT NULL DEFAULT TRUE,
+    atualizado_em TIMESTAMP NOT NULL,
+    id_cliente INT NOT NULL REFERENCES cliente(id)
+);
+
+CREATE TABLE cliente_categoria (
+    id SERIAL PRIMARY KEY,
+    id_cliente INT NOT NULL REFERENCES cliente(id),
+    id_categoria INT NOT NULL REFERENCES categoria(id),
+    atribuido_em TIMESTAMP NOT NULL,
+    UNIQUE (id_cliente, id_categoria)
 );
