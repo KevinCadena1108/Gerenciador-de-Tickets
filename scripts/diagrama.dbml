@@ -7,7 +7,7 @@ table categoria {
 table matricula {
   id serial [pk]
   matricula char(11) [unique]
-  ativo boolean [not null, default: true]
+  is_ativo boolean [not null, default: true]
   atualizado_em timestamp [not null]
   id_cliente int [ref: - cliente.id]
 }

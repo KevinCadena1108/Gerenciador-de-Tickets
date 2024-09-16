@@ -23,7 +23,7 @@ CREATE TABLE categoria (
 CREATE TABLE matricula (
     id SERIAL PRIMARY KEY,
     matricula CHAR(11) UNIQUE,
-    ativo BOOLEAN NOT NULL DEFAULT TRUE,
+    is_ativo BOOLEAN NOT NULL DEFAULT TRUE,
     atualizado_em TIMESTAMP NOT NULL,
     id_cliente INT NOT NULL REFERENCES cliente(id)
 );
