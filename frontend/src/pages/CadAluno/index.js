@@ -1,4 +1,4 @@
-import { Box, TextField, Grid } from "@mui/material";
+import { Box, TextField, Grid, Button } from "@mui/material";
 import Header from "../../components/Header";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
@@ -11,7 +11,7 @@ function CadAluno() {
     <Box>
       <Header />
       <Box sx={{ textAlign: "center", marginTop: "20px" }}>
-        <Typography variant="h5"> Cadastro de Aluno </Typography>
+        <Typography variant="h5"> Cadastro de Cliente </Typography>
       </Box>
       <Box sx={{ marginTop: "20px", marginLeft: "20px", marginRight: "20px" }}>
         <Grid container spacing={2}>
@@ -22,7 +22,12 @@ function CadAluno() {
             <TextField fullWidth label="CPF" variant="outlined" />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField fullWidth label="Email" variant="outlined" />
+            <TextField
+              fullWidth
+              label="Email"
+              variant="outlined"
+              type="email"
+            />
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField fullWidth label="Telefone" variant="outlined" />
@@ -49,6 +54,13 @@ function CadAluno() {
           </Grid>
         </Grid>
       </Box>
+      <Button
+        variant="contained"
+        color="primary"
+        sx={{ marginTop: "20px", marginLeft: "20px" }}
+      >
+        Cadastrar
+      </Button>
     </Box>
   );
 }

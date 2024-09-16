@@ -12,7 +12,7 @@ function CompTi() {
     <Box>
       <Header />
       <Box sx={{ textAlign: "center", marginTop: "20px" }}>
-        <Typography variant="h5"> Compra de tickts </Typography>
+        <Typography variant="h5"> Compra de tickets </Typography>
       </Box>
       <Box sx={{ marginLeft: "20px" }}>
         <TextField label="Quantidade" type="number" />
@@ -31,7 +31,7 @@ function CompTi() {
         color="primary"
         sx={{ marginTop: "20px", marginLeft: "20px" }}
       >
-        Compar
+        Comprar
       </Button>
     </Box>
   );
