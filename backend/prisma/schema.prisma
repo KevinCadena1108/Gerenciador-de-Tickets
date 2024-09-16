@@ -6,3 +6,46 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Cliente {
+  id         Int         @id @default(autoincrement())
+  cpf        String      @unique @db.Char(11)
+  nome       String      @db.VarChar(128)
+  email      String      @db.VarChar(320)
+  telefone   String      @db.VarChar(20)
+  nascimento DateTime    @db.Timestamp()
+  saldo      Decimal     @default(0) @db.Decimal(10, 2)
+  senha      String      @db.VarChar(145)
+  Matricula  Matricula[]
+
+  @@map("cliente")
+}
+
+model Categoria {
+  id    Int     @id
+  nome  String  @unique @db.VarChar(64)
+  valor Decimal @db.Decimal(10, 2)
+
+  @@map("categoria")
+}
+
+model Matricula {
+  id           Int      @id @default(autoincrement())
+  matricula    String   @unique @db.Char(11)
+  isAtivo      Boolean  @default(true) @map("is_ativo") @db.Boolean()
+  atualizadoEm DateTime @map("atualizado_em") @db.Timestamp()
+  idCliente    Int      @map("id_cliente")
+  cliente      Cliente  @relation(fields: [idCliente], references: [id])
+
+  @@map("matricula")
+}
+
+model ClienteCategoria {
+  id          Int      @id @default(autoincrement())
+  idCliente   Int      @map("id_cliente")
+  idCategoria Int      @map("id_categoria")
+  atribuidoEm DateTime @map("atribuido_em") @db.Timestamp()
+
+  @@unique([idCliente, idCategoria])
+  @@map("cliente_categoria")
+}
