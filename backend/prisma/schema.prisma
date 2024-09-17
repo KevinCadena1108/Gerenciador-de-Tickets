@@ -31,7 +31,7 @@ model Categoria {
 
 model Matricula {
   id           Int      @id @default(autoincrement())
-  matricula    String   @unique @db.Char(11)
+  matricula    String   @unique @db.Char(10)
   isAtivo      Boolean  @default(true) @map("is_ativo") @db.Boolean()
   atualizadoEm DateTime @map("atualizado_em") @db.Timestamp()
   idCliente    Int      @map("id_cliente")
