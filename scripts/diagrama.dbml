@@ -12,16 +12,6 @@ table matricula {
   id_cliente int [ref: - cliente.id]
 }
 
-table categoria_cliente {
-  id int [pk, increment]
-  id_cliente int [ref: - cliente.id]
-  id_categoria int [ref: - categoria.id]
-  atribuido_em timestamp [not null]
-  indexes {
-    (id_cliente, id_categoria) [unique]
-  }
-}
-
 table cliente {
   id serial [pk]
   cpf char(11) [not null, unique]
@@ -31,4 +21,5 @@ table cliente {
   nascimento date [not null]
   saldo decimal (10, 2) [not null, default: 0.0]
   senha varchar(145) [not null]
+  id_categoria int [ref: - categoria.id]
 }
