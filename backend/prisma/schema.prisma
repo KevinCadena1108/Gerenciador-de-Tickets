@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["relationJoins"]
 }
 
 datasource db {
@@ -19,7 +20,7 @@ model Cliente {
   idCategoria Int      @map("id_categoria")
 
   categoria Categoria   @relation(fields: [idCategoria], references: [id])
-  Matricula Matricula[]
+  matricula Matricula[]
 
   @@map("cliente")
 }
