@@ -1,4 +1,3 @@
-import { Exclude } from 'class-transformer';
 import { IsDateString, IsEmail, IsInt, IsNotEmpty } from 'class-validator';
 import { IsString, Length, MaxLength, Min, MinLength } from 'class-validator';
 
@@ -31,11 +30,10 @@ export class CreateClienteDto {
   @IsString({ message: 'A senha deve ser uma string' })
   @IsNotEmpty({ message: 'A senha não pode ser vazia' })
   @MinLength(8, { message: 'A senha deve ter no mínimo 8 caracteres' })
-  @Exclude()
   senha: string;
 
-  @IsInt({ message: 'O id da categoria deve ser um número inteiro' })
-  @Min(0, { message: 'O id da categoria deve ser um número positivo' })
+  @IsInt({ message: 'O id da categoria deve ser um número maior que zero' })
+  @Min(0, { message: 'O id da categoria deve ser um maior que zero' })
   idCategoria: number;
 
   @IsString({ message: 'O número de matrícula deve ser uma string' })
