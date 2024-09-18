@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateClienteDto } from './dto/create-cliente.dto';
 import { AuthService } from 'src/auth/auth.service';
@@ -46,7 +50,7 @@ export class ClienteService {
         nome: createClienteDto.nome,
         senha: hashedPass,
         telefone: createClienteDto.telefone,
-        Matricula: {
+        matricula: {
           create: {
             matricula: createClienteDto.numeroMatricula,
             isAtivo: true,
@@ -63,5 +67,109 @@ export class ClienteService {
     delete newCliente.senha;
 
     return newCliente;
+  }
+
+  async getAll() {
+    const clientes = await this.prismaService.cliente.findMany({
+      relationLoadStrategy: 'join',
+      include: {
+        matricula: true,
+        categoria: true,
+      },
+    });
+
+    return clientes.map((cliente) => {
+      delete cliente.id;
+      delete cliente.senha;
+      delete cliente.idCategoria;
+      delete cliente.categoria.id;
+
+      cliente.matricula.forEach((matricula) => {
+        delete matricula.id;
+        delete matricula.idCliente;
+      });
+
+      return cliente;
+    });
+  }
+
+  async getByCpf(cpf: string) {
+    const cliente = await this.prismaService.cliente.findFirst({
+      where: { cpf },
+      include: {
+        matricula: true,
+        categoria: true,
+      },
+    });
+
+    if (!cliente) {
+      throw new NotFoundException('Cliente não encontrado por CPF');
+    }
+
+    delete cliente.id;
+    delete cliente.senha;
+    delete cliente.idCategoria;
+    delete cliente.categoria.id;
+
+    cliente.matricula.forEach((matricula) => {
+      delete matricula.id;
+      delete matricula.idCliente;
+    });
+
+    return cliente;
+  }
+
+  async getByMatricula(matricula: string) {
+    const cliente = await this.prismaService.cliente.findFirst({
+      where: { matricula: { some: { matricula } } },
+      include: {
+        matricula: true,
+        categoria: true,
+      },
+    });
+
+    if (!cliente) {
+      throw new NotFoundException('Cliente não encontrado por matrícula');
+    }
+
+    delete cliente.id;
+    delete cliente.senha;
+    delete cliente.idCategoria;
+    delete cliente.categoria.id;
+
+    cliente.matricula.forEach((matricula) => {
+      delete matricula.id;
+      delete matricula.idCliente;
+    });
+
+    return cliente;
+  }
+
+  async getByNome(nome: string) {
+    const clientes = await this.prismaService.cliente.findMany({
+      where: { nome: { contains: nome, mode: 'insensitive' } },
+      include: {
+        matricula: true,
+        categoria: true,
+      },
+    });
+
+    if (!clientes) {
+      throw new NotFoundException('Cliente não encontrado por nome');
+    }
+
+    return clientes.map((cliente) => {
+      delete cliente.id;
+      delete cliente.senha;
+      delete cliente.idCategoria;
+      delete cliente.categoria.id;
+
+      cliente.matricula.forEach((matricula) => {
+        delete matricula.id;
+        delete matricula.idCliente;
+      });
+
+      return cliente;
+    });
   }
 }
