@@ -94,55 +94,55 @@ export class ClienteService {
   }
 
   async getByCpf(cpf: string) {
-    const cliente = await this.prismaService.cliente.findFirst({
-      where: { cpf },
+    const clientes = await this.prismaService.cliente.findMany({
+      where: { cpf: { contains: cpf, mode: 'insensitive' } },
       include: {
         matricula: true,
         categoria: true,
       },
     });
 
-    if (!cliente) {
-      throw new NotFoundException('Cliente não encontrado por CPF');
-    }
+    clientes.forEach((cliente) => {
+      delete cliente.id;
+      delete cliente.senha;
+      delete cliente.idCategoria;
+      delete cliente.categoria.id;
 
-    delete cliente.id;
-    delete cliente.senha;
-    delete cliente.idCategoria;
-    delete cliente.categoria.id;
-
-    cliente.matricula.forEach((matricula) => {
-      delete matricula.id;
-      delete matricula.idCliente;
+      cliente.matricula.forEach((matricula) => {
+        delete matricula.id;
+        delete matricula.idCliente;
+      });
     });
 
-    return cliente;
+    return clientes;
   }
 
   async getByMatricula(matricula: string) {
-    const cliente = await this.prismaService.cliente.findFirst({
-      where: { matricula: { some: { matricula } } },
+    const clientes = await this.prismaService.cliente.findMany({
+      where: {
+        matricula: {
+          some: { matricula: { contains: matricula, mode: 'insensitive' } },
+        },
+      },
       include: {
         matricula: true,
         categoria: true,
       },
     });
 
-    if (!cliente) {
-      throw new NotFoundException('Cliente não encontrado por matrícula');
-    }
+    clientes.forEach((cliente) => {
+      delete cliente.id;
+      delete cliente.senha;
+      delete cliente.idCategoria;
+      delete cliente.categoria.id;
 
-    delete cliente.id;
-    delete cliente.senha;
-    delete cliente.idCategoria;
-    delete cliente.categoria.id;
-
-    cliente.matricula.forEach((matricula) => {
-      delete matricula.id;
-      delete matricula.idCliente;
+      cliente.matricula.forEach((matricula) => {
+        delete matricula.id;
+        delete matricula.idCliente;
+      });
     });
 
-    return cliente;
+    return clientes;
   }
 
   async getByNome(nome: string) {
@@ -153,10 +153,6 @@ export class ClienteService {
         categoria: true,
       },
     });
-
-    if (!clientes) {
-      throw new NotFoundException('Cliente não encontrado por nome');
-    }
 
     return clientes.map((cliente) => {
       delete cliente.id;
