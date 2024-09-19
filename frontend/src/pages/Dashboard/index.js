@@ -5,16 +5,22 @@ import { Link } from "react-router-dom";
 import Header from "../../components/Header";
 import Typography from "@mui/material/Typography";
 import Caixa from "../../components/Caixa";
+import AdicionarSaldo from "../../components/AdicionarSaldo";
 
 function Dashboard() {
+  const buttonStyle = {
+    width: "230px",
+    color: "primary",
+  };
+
   return (
     <Box>
       <Header />
       <Box sx={{ textAlign: "center", marginTop: "20px" }}>
         <Typography variant="h5"> Dashboard </Typography>
       </Box>
-      <Box sx={{ marginTop: "-150px" }}> 
-        <Caixa>
+      <Box sx={{ display: "flex",  marginTop: "-150px" }}>
+        <Caixa sx={{ marginLeft: "30px" }}>
           <Box
             sx={{
               display: "flex",
@@ -26,24 +32,27 @@ function Dashboard() {
             }}
           >
             <Link to="/pesqcli">
-              <Button variant="contained" color="primary" sx={{ marginBottom: 2 }}>
+              <Button variant="contained" sx={buttonStyle}>
                 Pesquisar Cliente
               </Button>
             </Link>
             <Link to="/cadaluno">
-              <Button variant="contained" color="primary" sx={{ marginBottom: 2 }}>
+              <Button variant="contained" sx={buttonStyle}>
                 Cadastrar Aluno
               </Button>
             </Link>
-            <Button variant="contained" color="secondary" sx={{ marginBottom: 2 }}>
-              Reconhecimento Facial
-            </Button>
             <Link to="/compti">
-              <Button variant="contained" color="default">
-                Comprar Tickets
+              <Button variant="contained" sx={buttonStyle}>
+                Adicionar Saldo
               </Button>
             </Link>
+            <Button variant="contained" sx={buttonStyle}>
+              Reconhecimento Facial
+            </Button>
           </Box>
+        </Caixa>
+        <Caixa sx={{ marginLeft: "30px" }}>
+          <AdicionarSaldo />
         </Caixa>
       </Box>
     </Box>
