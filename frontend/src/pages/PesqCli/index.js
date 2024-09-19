@@ -26,9 +26,19 @@ const MetodoPesquisa = {
 };
 
 function formatarMatriculas(matriculas) {
-  return matriculas
-    .map((matricula) => `${matricula.matricula} ${matricula.isAtivo ? '(Ativo)' : '(Inativo)'}`)
-    .join('\n');
+  const addLineBreak = (str) =>
+    str.split('\n').map((subStr) => {
+      return (
+        <>
+          {subStr}
+          <br />
+        </>
+      );
+    });
+
+  return addLineBreak(
+    matriculas.map((matricula) => `${matricula.matricula} ${matricula.isAtivo ? '(Ativo)' : '(Inativo)'}`).join('\n')
+  );
 }
 
 function PesqCli() {
@@ -37,7 +47,27 @@ function PesqCli() {
   const [dadosPesquisa, setDadosPesquisa] = useState('');
 
   const pesquisar = () => {
-    // TODO: implementar método para pesquisar
+    var url = 'http://localhost:3001/cliente';
+
+    switch (metodoPesquisa) {
+      case MetodoPesquisa.NOME:
+        url += `/nome/${dadosPesquisa}`;
+        break;
+      case MetodoPesquisa.CPF:
+        url += `/cpf/${dadosPesquisa}`;
+        break;
+      case MetodoPesquisa.MATRICULA:
+        url += `/matricula/${dadosPesquisa}`;
+        break;
+    }
+
+    axios
+      .get(url)
+      .then((res) => setDados(res.data))
+      .catch((err) => {
+        // TODO: mostrar mensagem de erro
+        console.error(err);
+      });
   };
 
   useEffect(() => {
@@ -49,7 +79,7 @@ function PesqCli() {
       })
       .catch((err) => {
         // TODO: mostrar mensagem de erro
-        console.err(err);
+        console.error(err);
       });
   }, []);
 
