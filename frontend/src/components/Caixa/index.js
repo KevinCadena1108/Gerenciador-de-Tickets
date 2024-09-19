@@ -1,7 +1,7 @@
 import React from "react";
 import Box from "@mui/material/Box";
 
-function Caixa({ children }) {
+function Caixa({ children, width = 400, height = 400, sx = {} }) {
   return (
     <div
       style={{
@@ -13,8 +13,8 @@ function Caixa({ children }) {
     >
       <Box
         sx={{
-          width: 400,
-          height: 400,
+          width,
+          height,
           color: "white",
           display: "flex",
           alignItems: "center",
@@ -22,6 +22,7 @@ function Caixa({ children }) {
           borderRadius: 2,
           boxShadow: 3,
           position: "relative",
+          ...sx,
         }}
       >
         {children}
