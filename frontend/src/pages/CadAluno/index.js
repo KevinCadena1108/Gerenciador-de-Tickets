@@ -23,14 +23,15 @@ function CadAluno() {
   const [nascimento, setNascimento] = useState(null);
 
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
 
   const cadastrar = () => {
     if (!nascimento || Object.prototype.toString.call(nascimento) !== '[object Date]' || isNaN(nascimento.getTime())) {
-      // TODO: mostrar mensagem de erro
+      // Exibir mensagem de erro de data inválida
+      setError('Data de nascimento inválida.');
       return;
     }
-
-    // TODO: enviar requisição para cadastrar aluno
+    // Enviar a requisição para cadastrar aluno (ainda precisa ser implementada, como no TODO)
   };
 
   useEffect(() => {
@@ -41,10 +42,38 @@ function CadAluno() {
         setIsLoading(false);
       })
       .catch((error) => {
-        // TODO: mostrar mensagem de erro ao carregar categorias
+        setError('Erro ao carregar categorias.');
         console.log(error);
       });
   }, []);
+
+  const cadastroCli = async () => {
+    try {
+      // Enviar os dados ao backend
+      const response = await axios.post('http://localhost:3001/cliente', {
+        cpf,
+        email,
+        nome,
+        telefone,
+        senha,
+        matricula,
+        categoria,
+        nascimento:nascimento.toString(),
+      });
+
+      // Se a requisição for bem-sucedida, exibir uma mensagem de sucesso ou redirecionar
+      console.log('Cliente cadastrado com sucesso:', response.data);
+    } catch (error) {
+      // Verificar se há uma resposta do servidor e exibir a mensagem adequada
+      if (error.response) {
+        console.error('Erro no servidor:', error.response.data);
+        setError(`Erro ao cadastrar: ${error.response.data.message}`);
+      } else {
+        console.error('Erro desconhecido:', error);
+        setError('Erro desconhecido ao tentar cadastrar.');
+      }
+    }
+  };
 
   return (
     <Box>
@@ -54,9 +83,10 @@ function CadAluno() {
       </Backdrop>
 
       <Box sx={{ textAlign: 'center', marginTop: '20px' }}>
-        <Typography variant="h5"> Cadastro de Cliente </Typography>
+        <Typography variant="h5">Cadastro de Cliente</Typography>
       </Box>
       <Box sx={{ marginTop: '20px', marginLeft: '20px', marginRight: '20px' }}>
+        {error && <Typography color="error">{error}</Typography>}
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
             <TextField
@@ -136,7 +166,14 @@ function CadAluno() {
             </LocalizationProvider>
           </Grid>
           <Grid item xs={12} sm={6}>
-            <Button variant="contained" color="primary" onClick={cadastrar}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => {
+                cadastrar();
+                cadastroCli();
+              }}
+            >
               Cadastrar
             </Button>
           </Grid>
