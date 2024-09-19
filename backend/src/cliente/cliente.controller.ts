@@ -22,7 +22,7 @@ export class ClienteController {
   }
 
   @Get('cpf/:cpf')
-  async getByCpf(@Param('id') cpf: string) {
+  async getByCpf(@Param('cpf') cpf: string) {
     return await this.clienteService.getByCpf(cpf);
   }
 
