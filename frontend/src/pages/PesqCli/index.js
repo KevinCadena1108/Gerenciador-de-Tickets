@@ -1,90 +1,79 @@
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import Box from "@mui/material/Box";
-import Header from "../../components/Header";
-import Typography from "@mui/material/Typography";
-import { Button, TextField } from "@mui/material";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import Grid from "@mui/material/Grid";
-import EditIcon from "@mui/icons-material/Edit";
-import LockIcon from "@mui/icons-material/Lock";
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
+import Box from '@mui/material/Box';
+import Header from '../../components/Header';
+import Typography from '@mui/material/Typography';
+import { Button, TextField } from '@mui/material';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+import Grid from '@mui/material/Grid';
+import EditIcon from '@mui/icons-material/Edit';
+import LockIcon from '@mui/icons-material/Lock';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 
-function createData(
-  nome,
-  cpf,
-  email,
-  telefone,
-  nascimento,
-  matricula,
-  categoria,
-  saldo
-) {
-  return {
-    nome,
-    cpf,
-    email,
-    telefone,
-    nascimento,
-    matricula,
-    categoria,
-    saldo,
-  };
+const MetodoPesquisa = {
+  NOME: 10,
+  CPF: 20,
+  MATRICULA: 30,
+};
+
+function formatarMatriculas(matriculas) {
+  return matriculas
+    .map((matricula) => `${matricula.matricula} ${matricula.isAtivo ? '(Ativo)' : '(Inativo)'}`)
+    .join('\n');
 }
 
-const rows = [
-  createData(
-    "João Silva",
-    "123.456.789-00",
-    "joao@example.com",
-    "(11) 98765-4321",
-    "01/01/1990",
-    "12345",
-    "A",
-    100.5
-  ),
-  createData(
-    "Maria Souza",
-    "987.654.321-00",
-    "maria@example.com",
-    "(21) 98765-4321",
-    "02/02/1985",
-    "67890",
-    "B",
-    200.75
-  ),
-  // Adicione mais dados conforme necessário
-];
-
 function PesqCli() {
+  const [dados, setDados] = useState([]);
+  const [metodoPesquisa, setMetodoPesquisa] = useState('');
+  const [dadosPesquisa, setDadosPesquisa] = useState('');
+
+  const pesquisar = () => {
+    // TODO: implementar método para pesquisar
+  };
+
+  useEffect(() => {
+    axios
+      .get('http://localhost:3001/cliente')
+      .then((res) => {
+        setDados(res.data);
+        console.log(res.data);
+      })
+      .catch((err) => {
+        // TODO: mostrar mensagem de erro
+        console.err(err);
+      });
+  }, []);
+
   return (
     <Box>
       <Header />
-      <Box sx={{ textAlign: "center", marginTop: "20px" }}>
+      <Box sx={{ textAlign: 'center', marginTop: '20px' }}>
         <Typography variant="h5"> Pesquisar Cliente </Typography>
       </Box>
-      <Box sx={{ marginTop: "20px", marginLeft: "20px" }}>
+      <Box sx={{ marginTop: '20px', marginLeft: '20px' }}>
         <Grid container spacing={3}>
           <Grid item xs="auto">
-            <FormControl sx={{ width: "200px" }}>
-              <InputLabel id="demo-select-small-label">
-                Opção de pesquisa
-              </InputLabel>
+            <FormControl sx={{ width: '200px' }}>
+              <InputLabel id="demo-select-small-label">Opção de pesquisa</InputLabel>
               <Select
                 labelId="demo-select-small-label"
                 id="demo-select-small"
                 label="Opção de pesquisa"
+                value={metodoPesquisa}
+                onChange={(v) => setMetodoPesquisa(v.target.value)}
               >
-                <MenuItem value={10}>Nome</MenuItem>
-                <MenuItem value={20}>CPF</MenuItem>
-                <MenuItem value={30}>Matrícula</MenuItem>
+                <MenuItem value={MetodoPesquisa.NOME}>Nome</MenuItem>
+                <MenuItem value={MetodoPesquisa.CPF}>CPF</MenuItem>
+                <MenuItem value={MetodoPesquisa.MATRICULA}>Matrícula</MenuItem>
               </Select>
             </FormControl>
           </Grid>
@@ -92,18 +81,20 @@ function PesqCli() {
             <TextField
               label="Dados da pesquisa"
               variant="outlined"
-              sx={{ width: "400px" }}
+              sx={{ width: '400px' }}
+              value={dadosPesquisa}
+              onChange={(v) => setDadosPesquisa(v.target.value)}
             />
           </Grid>
-          <Grid item xs sx={{ margin: "auto"}}>
-            <Button variant="contained" color="primary">
+          <Grid item xs sx={{ margin: 'auto' }}>
+            <Button variant="contained" color="primary" onClick={() => pesquisar()}>
               Pesquisar
             </Button>
           </Grid>
         </Grid>
       </Box>
 
-      <Box sx={{ marginTop: "20px" }}>
+      <Box sx={{ marginTop: '20px' }}>
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 400 }} aria-label="simple table">
             <TableHead>
@@ -120,27 +111,25 @@ function PesqCli() {
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows.map((row) => (
-                <TableRow
-                  key={row.nome}
-                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                >
-                  <TableCell component="th" scope="row">
-                    {row.nome}
-                  </TableCell>
-                  <TableCell>{row.cpf}</TableCell>
-                  <TableCell>{row.email}</TableCell>
-                  <TableCell>{row.telefone}</TableCell>
-                  <TableCell>{row.nascimento}</TableCell>
-                  <TableCell>{row.matricula}</TableCell>
-                  <TableCell>{row.categoria}</TableCell>
-                  <TableCell>{row.saldo}</TableCell>
-                  <TableCell align="right">
-                    <EditIcon sx={{ marginRight: 1 }} />
-                    <LockIcon />
-                  </TableCell>
-                </TableRow>
-              ))}
+              {dados &&
+                dados.map((row) => (
+                  <TableRow key={row.cpf} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                    <TableCell component="th" scope="row">
+                      {row.nome}
+                    </TableCell>
+                    <TableCell>{row.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4')}</TableCell>
+                    <TableCell>{row.email}</TableCell>
+                    <TableCell>{row.telefone}</TableCell>
+                    <TableCell>{new Date(row.nascimento).toLocaleDateString()}</TableCell>
+                    <TableCell>{formatarMatriculas(row.matricula)}</TableCell>
+                    <TableCell>{row.categoria.nome}</TableCell>
+                    <TableCell>R${row.saldo}</TableCell>
+                    <TableCell align="right">
+                      <EditIcon sx={{ marginRight: 1 }} />
+                      <LockIcon />
+                    </TableCell>
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
         </TableContainer>
