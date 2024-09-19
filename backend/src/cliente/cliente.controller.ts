@@ -1,7 +1,6 @@
-import { Body, Controller, Get, Logger, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { CreateClienteDto } from './dto/create-cliente.dto';
 import { ClienteService } from './cliente.service';
-import { SearchClienteNomeDto } from './dto/search-cliente-nome.dto';
 
 @Controller('cliente')
 export class ClienteController {
@@ -27,8 +26,8 @@ export class ClienteController {
     return await this.clienteService.getByCpf(cpf);
   }
 
-  @Get('nome')
-  async getByNome(@Body() nome: SearchClienteNomeDto) {
-    return await this.clienteService.getByNome(nome.nome);
+  @Get('nome/:nome')
+  async getByNome(@Param('nome') nome: string) {
+    return await this.clienteService.getByNome(nome);
   }
 }
