@@ -41,11 +41,6 @@ function Dashboard() {
                 Cadastrar Aluno
               </Button>
             </Link>
-            <Link to="/compti">
-              <Button variant="contained" sx={buttonStyle}>
-                Adicionar Saldo
-              </Button>
-            </Link>
             <Button variant="contained" sx={buttonStyle}>
               Reconhecimento Facial
             </Button>
