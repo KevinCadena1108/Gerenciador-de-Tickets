@@ -1,34 +1,46 @@
-import { Box, TextField, Grid, Button, Backdrop, CircularProgress } from '@mui/material';
-import Header from '../../components/Header';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
-import Select from '@mui/material/Select';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import Typography from '@mui/material/Typography';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider/LocalizationProvider';
-import { useEffect, useState } from 'react';
-import axios from 'axios';
+import {
+  Box,
+  TextField,
+  Grid,
+  Button,
+  Backdrop,
+  CircularProgress,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Select,
+  Typography,
+} from "@mui/material";
+
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider/LocalizationProvider";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import Header from "../../components/Header";
 
 function CadAluno() {
   const [categorias, setCategorias] = useState([]);
-  const [nome, setNome] = useState('');
-  const [cpf, setCpf] = useState('');
-  const [email, setEmail] = useState('');
-  const [telefone, setTelefone] = useState('');
-  const [senha, setSenha] = useState('');
-  const [matricula, setMatricula] = useState('');
-  const [categoria, setCategoria] = useState('');
+  const [nome, setNome] = useState("");
+  const [cpf, setCpf] = useState("");
+  const [email, setEmail] = useState("");
+  const [telefone, setTelefone] = useState("");
+  const [senha, setSenha] = useState("");
+  const [matricula, setMatricula] = useState("");
+  const [categoria, setCategoria] = useState("");
   const [nascimento, setNascimento] = useState(null);
 
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const cadastrar = () => {
-    if (!nascimento || Object.prototype.toString.call(nascimento) !== '[object Date]' || isNaN(nascimento.getTime())) {
+    if (
+      !nascimento ||
+      Object.prototype.toString.call(nascimento) !== "[object Date]" ||
+      isNaN(nascimento.getTime())
+    ) {
       // Exibir mensagem de erro de data inválida
-      setError('Data de nascimento inválida.');
+      setError("Data de nascimento inválida.");
       return;
     }
     // Enviar a requisição para cadastrar aluno (ainda precisa ser implementada, como no TODO)
@@ -36,13 +48,13 @@ function CadAluno() {
 
   useEffect(() => {
     axios
-      .get('http://localhost:3001/categoria')
+      .get("http://localhost:3001/categoria")
       .then((response) => {
         setCategorias(response.data);
         setIsLoading(false);
       })
       .catch((error) => {
-        setError('Erro ao carregar categorias.');
+        setError("Erro ao carregar categorias.");
         console.log(error);
       });
   }, []);
@@ -50,7 +62,7 @@ function CadAluno() {
   const cadastroCli = async () => {
     try {
       // Enviar os dados ao backend
-      const response = await axios.post('http://localhost:3001/cliente', {
+      const response = await axios.post("http://localhost:3001/cliente", {
         cpf,
         email,
         nome,
@@ -58,19 +70,19 @@ function CadAluno() {
         senha,
         matricula,
         categoria,
-        nascimento:nascimento.toString(),
+        nascimento: nascimento.toString(),
       });
 
       // Se a requisição for bem-sucedida, exibir uma mensagem de sucesso ou redirecionar
-      console.log('Cliente cadastrado com sucesso:', response.data);
+      console.log("Cliente cadastrado com sucesso:", response.data);
     } catch (error) {
       // Verificar se há uma resposta do servidor e exibir a mensagem adequada
       if (error.response) {
-        console.error('Erro no servidor:', error.response.data);
+        console.error("Erro no servidor:", error.response.data);
         setError(`Erro ao cadastrar: ${error.response.data.message}`);
       } else {
-        console.error('Erro desconhecido:', error);
-        setError('Erro desconhecido ao tentar cadastrar.');
+        console.error("Erro desconhecido:", error);
+        setError("Erro desconhecido ao tentar cadastrar.");
       }
     }
   };
@@ -78,14 +90,17 @@ function CadAluno() {
   return (
     <Box>
       <Header />
-      <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={isLoading}>
+      <Backdrop
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={isLoading}
+      >
         <CircularProgress color="inherit" />
       </Backdrop>
 
-      <Box sx={{ textAlign: 'center', marginTop: '20px' }}>
+      <Box sx={{ textAlign: "center", marginTop: "20px" }}>
         <Typography variant="h5">Cadastro de Cliente</Typography>
       </Box>
-      <Box sx={{ marginTop: '20px', marginLeft: '20px', marginRight: '20px' }}>
+      <Box sx={{ marginTop: "20px", marginLeft: "20px", marginRight: "20px" }}>
         {error && <Typography color="error">{error}</Typography>}
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
@@ -98,7 +113,13 @@ function CadAluno() {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <TextField fullWidth label="CPF" variant="outlined" value={cpf} onChange={(v) => setCpf(v.target.value)} />
+            <TextField
+              fullWidth
+              label="CPF"
+              variant="outlined"
+              value={cpf}
+              onChange={(v) => setCpf(v.target.value)}
+            />
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
@@ -139,7 +160,7 @@ function CadAluno() {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <FormControl sx={{ width: '280px' }}>
+            <FormControl sx={{ width: "280px" }}>
               <InputLabel id="demo-select-small-label">Categoria</InputLabel>
               <Select
                 labelId="demo-select-small-label"
@@ -160,7 +181,7 @@ function CadAluno() {
               <DatePicker
                 label="Data de nascimento"
                 format="DD/MM/YYYY"
-                sx={{ marginLeft: '20px' }}
+                sx={{ marginLeft: "20px" }}
                 onChange={(v) => setNascimento(v === null ? null : v.toDate())}
               />
             </LocalizationProvider>
