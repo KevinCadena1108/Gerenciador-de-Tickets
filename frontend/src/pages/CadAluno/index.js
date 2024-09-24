@@ -86,7 +86,7 @@ function CadAluno() {
       }
     }
   };
-
+  
   return (
     <Box>
       <Header />
