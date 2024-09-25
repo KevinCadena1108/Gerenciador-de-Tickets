@@ -10,12 +10,14 @@ import {
   InputLabel,
   Select,
   Typography,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider/LocalizationProvider";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Header from "../../components/Header";
 
@@ -28,23 +30,40 @@ function CadAluno() {
   const [senha, setSenha] = useState("");
   const [matricula, setMatricula] = useState("");
   const [categoria, setCategoria] = useState("");
+  const [rawNascimento, setRawNascimento] = useState(null);
   const [nascimento, setNascimento] = useState(null);
 
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [mensagem, setMensagem] = useState("");
+  const [isError, setIsError] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
-  const cadastrar = () => {
-    if (
-      !nascimento ||
-      Object.prototype.toString.call(nascimento) !== "[object Date]" ||
-      isNaN(nascimento.getTime())
-    ) {
-      // Exibir mensagem de erro de data inválida
-      setError("Data de nascimento inválida.");
+  const abrirMensagem = (msg, isError) => {
+    console.log('MSG', msg)
+    setMensagem(msg);
+    setIsOpen(true)
+    setIsError(isError);
+  }
+
+  const fecharMensagem = ( event, reason ) => {
+    if (reason === 'clickaway') {
       return;
     }
-    // Enviar a requisição para cadastrar aluno (ainda precisa ser implementada, como no TODO)
+
+    setIsOpen(false);
   };
+
+  const limparCampos = () => {
+    setCategoria('');
+    setNome('');
+    setCpf('');
+    setEmail('');
+    setTelefone('');
+    setSenha('');
+    setMatricula('');
+    setNascimento(null);
+    setRawNascimento(null);
+  }
 
   useEffect(() => {
     axios
@@ -54,39 +73,51 @@ function CadAluno() {
         setIsLoading(false);
       })
       .catch((error) => {
-        setError("Erro ao carregar categorias.");
+        abrirMensagem("Erro ao carregar categorias.", true);
         console.log(error);
       });
   }, []);
 
+  const checkData = () => {
+    return !nascimento || Object.prototype.toString.call(nascimento) !== "[object Date]" || isNaN(nascimento.getTime());
+  }
+
   const cadastroCli = async () => {
     try {
+
+      if (checkData()) {
+        // Exibir mensagem de erro de data inválida
+        console.error('Nascimento invalido');
+        console.log(Object.prototype.toString.call(nascimento))
+        abrirMensagem("Data de nascimento inválida.", true);
+        return;
+      }
+
       // Enviar os dados ao backend
-      const response = await axios.post("http://localhost:3001/cliente", {
+      await axios.post("http://localhost:3001/cliente", {
         cpf,
         email,
         nome,
         telefone,
         senha,
-        matricula,
-        categoria,
-        nascimento: nascimento.toString(),
+        numeroMatricula: matricula,
+        idCategoria: categoria,
+        nascimento: nascimento.toISOString(),
       });
 
       // Se a requisição for bem-sucedida, exibir uma mensagem de sucesso ou redirecionar
-      console.log("Cliente cadastrado com sucesso:", response.data);
+      limparCampos();
+      abrirMensagem("Cliente cadastrado com sucesso.", false);
     } catch (error) {
       // Verificar se há uma resposta do servidor e exibir a mensagem adequada
       if (error.response) {
-        console.error("Erro no servidor:", error.response.data);
-        setError(`Erro ao cadastrar: ${error.response.data.message}`);
+        abrirMensagem(`Erro ao cadastrar: ${error.response.data.message[0]}`, true);
       } else {
-        console.error("Erro desconhecido:", error);
-        setError("Erro desconhecido ao tentar cadastrar.");
+        abrirMensagem("Erro desconhecido ao tentar cadastrar.", false);
       }
     }
   };
-  
+
   return (
     <Box>
       <Header />
@@ -101,7 +132,6 @@ function CadAluno() {
         <Typography variant="h5">Cadastro de Cliente</Typography>
       </Box>
       <Box sx={{ marginTop: "20px", marginLeft: "20px", marginRight: "20px" }}>
-        {error && <Typography color="error">{error}</Typography>}
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
             <TextField
@@ -181,8 +211,12 @@ function CadAluno() {
               <DatePicker
                 label="Data de nascimento"
                 format="DD/MM/YYYY"
+                value={rawNascimento}
                 sx={{ marginLeft: "20px" }}
-                onChange={(v) => setNascimento(v === null ? null : v.toDate())}
+                onChange={(e) => {
+                  setRawNascimento(e)
+                  setNascimento(e == null ? null : e.toDate())
+                }}
               />
             </LocalizationProvider>
           </Grid>
@@ -191,7 +225,6 @@ function CadAluno() {
               variant="contained"
               color="primary"
               onClick={() => {
-                cadastrar();
                 cadastroCli();
               }}
             >
@@ -199,6 +232,18 @@ function CadAluno() {
             </Button>
           </Grid>
         </Grid>
+      </Box>
+      <Box>
+        <Snackbar open={isOpen} autoHideDuration={5000} onClose={fecharMensagem} anchorOrigin={{vertical: 'bottom', horizontal: 'right'}}>
+          <Alert
+            onClose={fecharMensagem}
+            severity={isError ? 'error' : 'success'}
+            variant="filled"
+            sx={{ width: '100%' }}
+          >
+            {mensagem}
+          </Alert>
+        </Snackbar>
       </Box>
     </Box>
   );

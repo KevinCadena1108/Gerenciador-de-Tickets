@@ -1,21 +1,17 @@
 import {
   BadRequestException,
   Injectable,
-  NotFoundException
+  NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateClienteDto } from './dto/create-cliente.dto';
 import { AuthService } from 'src/auth/auth.service';
-import { UpdateClienteDto } from './dto/update-cliente.dto';
-import { CategoriaService } from 'src/categoria/categoria.service';
-import { MatriculaService } from 'src/matricula/matricula.service';
 
 @Injectable()
 export class ClienteService {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly authService: AuthService,
-    private readonly categoriaService: CategoriaService
   ) {}
 
   async createCliente(createClienteDto: CreateClienteDto) {
@@ -71,55 +67,6 @@ export class ClienteService {
     delete newCliente.senha;
 
     return newCliente;
-  }
-
-  async updateCliente(cpf: string, updateClienteDto: Partial<UpdateClienteDto>){
-    const clientes = await this.getByCpf(cpf);
-    if(clientes.length === 0){
-      throw new NotFoundException('O cliente não foi encontrado!');
-    }
-
-    const cliente = clientes[0];
-
-    if(updateClienteDto.cpf){
-      const cpfExiste = await this.getByCpf(updateClienteDto.cpf);
-      if(cpfExiste){
-        throw new BadRequestException('Um cliente com o mesmo CPF já existe!');
-      }
-    }
-
-    if(updateClienteDto.numeroMatricula){
-      const propriaMatricula = cliente.matricula.find(m => m.matricula === updateClienteDto.numeroMatricula);
-      if(propriaMatricula) return;
-
-      const oldCliente = await this.getByMatricula(updateClienteDto.numeroMatricula);
-      if(oldCliente.length > 0){
-        throw new BadRequestException('A matrícula já está cadastrada em outro cliente!');
-      }
-    }
-
-    if(updateClienteDto.idCategoria && updateClienteDto.idCategoria !== cliente.idCategoria){
-      const categorias = await this.categoriaService.getAll();
-      const categoriaExiste = categorias.find(c => c.id === updateClienteDto.idCategoria);
-      if(!categoriaExiste){
-        throw new NotFoundException('A categoria informada não existe!');
-      }
-    }
-
-    return await this.prismaService.cliente.update({
-      where: {cpf},
-      data: {
-        matricula: {
-          update: {data: {matricula: updateClienteDto.numeroMatricula}, where: {id: cliente.matricula[0].id}}
-        },
-        idCategoria: updateClienteDto.idCategoria,
-        cpf: updateClienteDto.cpf,
-        email: updateClienteDto.email,
-        nascimento: updateClienteDto.nascimento,
-        nome: updateClienteDto.nome,
-        telefone: updateClienteDto.telefone,
-      }
-    });
   }
 
   async getAll() {
