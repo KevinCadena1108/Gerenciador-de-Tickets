@@ -13,15 +13,24 @@ import Header from "../../components/Header";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider/LocalizationProvider";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { Link } from "react-router-dom";
 
 function EdiCli() {
   return (
     <Box>
       <Header />
 
-      <Box sx={{ textAlign: "center", marginTop: "20px" }}>
-        <Typography variant="h5">Editar Cliente</Typography>
-      </Box>
+        <Grid container alignItems="center" sx={{marginTop:"20px"}}>
+          <Grid item xs>
+            <Typography variant="h5" sx={{textAlign:"center", marginLeft:"25px"}}>Editar Cliente</Typography>
+          </Grid>
+          <Grid item>
+            <Link to="/pesqcli">
+              <ArrowBackIcon sx={{ color: "black", marginRight: "25px" }} />
+            </Link>
+          </Grid>
+        </Grid>
       <Box sx={{ marginTop: "20px", marginLeft: "20px", marginRight: "20px" }}>
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
