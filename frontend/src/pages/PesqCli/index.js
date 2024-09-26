@@ -123,6 +123,10 @@ function PesqCli() {
     setCpf(cpf); // Define o CPF no contexto
     navigate("/editcli"); // Navega para a página de edição
   };
+  
+  const handleClear = () => {
+    window.location.reload();
+  };
 
   return (
     <Box>
@@ -161,17 +165,26 @@ function PesqCli() {
             <Button
               variant="contained"
               color="primary"
+              sx={{ marginRight: 2 }}
               onClick={() => pesquisar()}
             >
               Pesquisar
+            </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              sx={{ marginLeft: 2 }}
+              onClick={handleClear}
+            >
+              Limpar
             </Button>
           </Grid>
         </Grid>
       </Box>
 
       <Box sx={{ marginTop: "20px" }}>
-        <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 400 }} aria-label="simple table">
+        <TableContainer component={Paper} sx={{ maxHeight: 515, overflowY: "auto" }}>
+        <Table stickyHeader sx={{ minWidth: 450 }} aria-label="simple table">
             <TableHead>
               <TableRow>
                 <TableCell>Nome</TableCell>
@@ -210,12 +223,16 @@ function PesqCli() {
                     <TableCell>{row.categoria.nome}</TableCell>
                     <TableCell>R${row.saldo}</TableCell>
                     <TableCell align="right">
+                    <Link to="/editcli">
                       <EditIcon
                         sx={{ marginRight: 1 }}
                         style={{ color: "black", cursor: "pointer" }}
                         onClick={() => handleEditClick(row.cpf)}
                       />
+                      </Link>
+                      <Link>
                       <LockIcon style={{ color: "black", cursor: "pointer" }} onClick={() => handleClickOpen(row)}/>
+                      </Link>
                     </TableCell>
                   </TableRow>
                 ))}
