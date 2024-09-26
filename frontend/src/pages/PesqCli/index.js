@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Box,
   Button,
@@ -26,6 +26,7 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import LockIcon from "@mui/icons-material/Lock";
 import Header from "../../components/Header";
+import { ClientContext } from "../../context/ClientContext"; // Importa o contexto
 
 const MetodoPesquisa = {
   NOME: 10,
@@ -62,6 +63,8 @@ function PesqCli() {
   const [dadosPesquisa, setDadosPesquisa] = useState("");
   const [open, setOpen] = useState(false);
   const [selectedClient, setSelectedClient] = useState(null);
+  const { setCpf } = useContext(ClientContext); // Usa o contexto
+  const navigate = useNavigate(); // Hook para navegação
 
   const pesquisar = () => {
     var url = "http://localhost:3001/cliente";
@@ -116,8 +119,9 @@ function PesqCli() {
     handleClose();
   };
 
-  const handleClear = () => {
-    window.location.reload();
+  const handleEditClick = (cpf) => {
+    setCpf(cpf); // Define o CPF no contexto
+    navigate("/editcli"); // Navega para a página de edição
   };
 
   return (
@@ -130,9 +134,7 @@ function PesqCli() {
         <Grid container spacing={3}>
           <Grid item xs="auto">
             <FormControl sx={{ width: "200px" }}>
-              <InputLabel id="demo-select-small-label">
-                Opção de pesquisa
-              </InputLabel>
+              <InputLabel id="demo-select-small-label">Opção de pesquisa</InputLabel>
               <Select
                 labelId="demo-select-small-label"
                 id="demo-select-small"
@@ -159,29 +161,17 @@ function PesqCli() {
             <Button
               variant="contained"
               color="primary"
-              sx={{ marginRight: 2 }}
               onClick={() => pesquisar()}
             >
               Pesquisar
-            </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              sx={{ marginLeft: 2 }}
-              onClick={handleClear}
-            >
-              Limpar
             </Button>
           </Grid>
         </Grid>
       </Box>
 
       <Box sx={{ marginTop: "20px" }}>
-        <TableContainer
-          component={Paper}
-          sx={{ maxHeight: 515, overflowY: "auto" }}
-        >
-          <Table stickyHeader sx={{ minWidth: 450 }} aria-label="simple table">
+        <TableContainer component={Paper}>
+          <Table sx={{ minWidth: 400 }} aria-label="simple table">
             <TableHead>
               <TableRow>
                 <TableCell>Nome</TableCell>
@@ -220,18 +210,12 @@ function PesqCli() {
                     <TableCell>{row.categoria.nome}</TableCell>
                     <TableCell>R${row.saldo}</TableCell>
                     <TableCell align="right">
-                      <Link to="/editcli">
-                        <EditIcon
-                          sx={{ marginRight: 1 }}
-                          style={{ color: "black" }}
-                        />
-                      </Link>
-                      <Link>
-                        <LockIcon
-                          style={{ color: "black" }}
-                          onClick={() => handleClickOpen(row)}
-                        />
-                      </Link>
+                      <EditIcon
+                        sx={{ marginRight: 1 }}
+                        style={{ color: "black", cursor: "pointer" }}
+                        onClick={() => handleEditClick(row.cpf)}
+                      />
+                      <LockIcon style={{ color: "black", cursor: "pointer" }} onClick={() => handleClickOpen(row)}/>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -244,15 +228,12 @@ function PesqCli() {
         <DialogTitle>Desativar Matrícula</DialogTitle>
         <DialogContent>
           <Typography>
-            Tem certeza de que deseja desativar a matrícula de{" "}
-            {selectedClient?.nome}?
+            Tem certeza de que deseja desativar a matrícula de {selectedClient?.nome}?
           </Typography>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancelar</Button>
-          <Button onClick={handleCancel} color="primary">
-            Desativar
-          </Button>
+          <Button onClick={handleCancel} color="primary">Desativar</Button>
         </DialogActions>
       </Dialog>
     </Box>
