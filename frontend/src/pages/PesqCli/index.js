@@ -26,6 +26,7 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import LockIcon from "@mui/icons-material/Lock";
 import Header from "../../components/Header";
+import LockOpenIcon from "@mui/icons-material/LockOpen";
 import { ClientContext } from "../../context/ClientContext"; // Importa o contexto
 
 const MetodoPesquisa = {
@@ -115,15 +116,67 @@ function PesqCli() {
   };
 
   const handleCancel = () => {
-    console.log(`Canceling registration for ${selectedClient.nome}`);
-    handleClose();
+    if (selectedClient) {
+      const matricula = selectedClient.matricula.find(m => m.isAtivo).matricula;
+      axios
+        .post(`http://localhost:3001/matricula/desativar/${matricula}`)
+        .then(() => {
+          console.log(`Matrícula ${matricula} desativada com sucesso`);
+          // Atualize a lista de clientes após desativar a matrícula
+          setDados(dados.map(client => {
+            if (client.cpf === selectedClient.cpf) {
+              return {
+                ...client,
+                matricula: client.matricula.map(m => 
+                  m.matricula === matricula ? { ...m, isAtivo: false } : m
+                )
+              };
+            }
+            return client;
+          }));
+          handleClose();
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    }
+  };
+
+  const handleActivate = () => {
+    if (selectedClient) {
+      const matriculaObj = selectedClient.matricula.find(m => !m.isAtivo);
+      if (matriculaObj) {
+        const matricula = matriculaObj.matricula;
+        axios
+          .post(`http://localhost:3001/matricula/ativar/${matricula}`)
+          .then(() => {
+            console.log(`Matrícula ${matricula} ativada com sucesso`);
+            // Atualize a lista de clientes após ativar a matrícula
+            setDados(dados.map(client => {
+              if (client.cpf === selectedClient.cpf) {
+                return {
+                  ...client,
+                  matricula: client.matricula.map(m => 
+                    m.matricula === matricula ? { ...m, isAtivo: true } : m
+                  )
+                };
+              }
+              return client;
+            }));
+            handleClose();
+          })
+          .catch((err) => {
+            console.error(err);
+          });
+      }
+    }
   };
 
   const handleEditClick = (cpf) => {
     setCpf(cpf); // Define o CPF no contexto
     navigate("/editcli"); // Navega para a página de edição
   };
-  
+
   const handleClear = () => {
     window.location.reload();
   };
@@ -231,8 +284,18 @@ function PesqCli() {
                       />
                       </Link>
                       <Link>
-                      <LockIcon style={{ color: "black", cursor: "pointer" }} onClick={() => handleClickOpen(row)}/>
-                      </Link>
+    {row.matricula.some(m => m.isAtivo) ? (
+      <LockIcon
+        style={{ color: "black", cursor: "pointer" }}
+        onClick={() => handleClickOpen(row)}
+      />
+    ) : (
+      <LockOpenIcon
+        style={{ color: "black", cursor: "pointer" }}
+        onClick={() => handleClickOpen(row)}
+      />
+    )}
+  </Link>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -242,15 +305,17 @@ function PesqCli() {
       </Box>
 
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Desativar Matrícula</DialogTitle>
+        <DialogTitle>{selectedClient?.matricula.some(m => m.isAtivo) ? "Desativar Matrícula" : "Ativar Matrícula"}</DialogTitle>
         <DialogContent>
           <Typography>
-            Tem certeza de que deseja desativar a matrícula de {selectedClient?.nome}?
+            Tem certeza de que deseja {selectedClient?.matricula.some(m => m.isAtivo) ? "desativar" : "ativar"} a matrícula de {selectedClient?.nome}?
           </Typography>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancelar</Button>
-          <Button onClick={handleCancel} color="primary">Desativar</Button>
+          <Button onClick={selectedClient?.matricula.some(m => m.isAtivo) ? handleCancel : handleActivate} color="primary">
+            {selectedClient?.matricula.some(m => m.isAtivo) ? "Desativar" : "Ativar"}
+          </Button>
         </DialogActions>
       </Dialog>
     </Box>
