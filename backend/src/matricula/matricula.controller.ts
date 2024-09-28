@@ -10,8 +10,8 @@ export class MatriculaController {
     return await this.matriculaService.ativarMatricula(matriculaId);
   }
 
-  // @Post('/desativar/:id')
-  // async desativarMatricula(@Param('id') matriculaId: string) {
-  //   return await this.matriculaService.desativarMatricula(matriculaId);
-  // }
+  @Post('/desativar/:id')
+  async desativarMatricula(@Param('id') matriculaId: string) {
+    return await this.matriculaService.desativarMatricula(matriculaId);
+  }
 }
