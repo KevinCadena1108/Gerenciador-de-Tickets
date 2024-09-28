@@ -1,39 +1,35 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { MatriculaRepository } from './matricula.repository';
 
 @Injectable()
 export class MatriculaService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(private readonly matriculaRepository: MatriculaRepository) {}
 
-  async ativarMatricula(matriculaId: string) {
-    const matricula = await this.prismaService.matricula.findUnique({
-      where: { matricula: matriculaId },
-    });
+  async ativarMatricula(matricula: string) {
+    const oldMatricula =
+      await this.matriculaRepository.getOneByMatricula(matricula);
 
-    if (!matricula) {
+    if (!oldMatricula) {
       throw new NotFoundException('Matrícula não encontrada');
     }
 
-    await this.prismaService.matricula.update({
-      where: { matricula: matriculaId },
-      data: { isAtivo: true },
+    await this.matriculaRepository.updateByMatricula(matricula, {
+      isAtivo: true,
     });
 
     return { message: 'Matrícula ativada com sucesso!' };
   }
 
-  async desativarMatricula(matriculaId: string) {
-    const matricula = await this.prismaService.matricula.findUnique({
-      where: { matricula: matriculaId },
-    });
+  async desativarMatricula(matricula: string) {
+    const oldMatricula =
+      await this.matriculaRepository.getOneByMatricula(matricula);
 
-    if (!matricula) {
+    if (!oldMatricula) {
       throw new NotFoundException('Matrícula não encontrada');
     }
 
-    await this.prismaService.matricula.update({
-      where: { matricula: matriculaId },
-      data: { isAtivo: false },
+    await this.matriculaRepository.updateByMatricula(matricula, {
+      isAtivo: false,
     });
 
     return { message: 'Matrícula desativada com sucesso!' };
