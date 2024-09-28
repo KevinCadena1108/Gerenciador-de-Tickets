@@ -55,10 +55,7 @@ export class ClienteController {
   }
 
   @Put(':cpf')
-  async updateCliente(
-    @Body() updateClienteDto: Partial<UpdateClienteDto>,
-    @Param('cpf') cpf: string,
-  ) {
+  async updateCliente(@Body() updateClienteDto: UpdateClienteDto, @Param('cpf') cpf: string) {
     return await this.clienteService.updateCliente(cpf, updateClienteDto);
   }
 }

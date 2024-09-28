@@ -143,17 +143,10 @@ export class ClienteService {
     });
   }
 
-  async updateCliente(cpf: string, updateClienteDto: Partial<UpdateClienteDto>) {
+  async updateCliente(cpf: string, updateClienteDto: UpdateClienteDto) {
     const cliente = await this.clienteRepository.getOneByCPF(cpf);
     if (!cliente) {
       throw new NotFoundException('O cliente não foi encontrado!');
-    }
-
-    if (updateClienteDto.cpf) {
-      const cpfExiste = await this.clienteRepository.getOneByCPF(updateClienteDto.cpf);
-      if (cpfExiste) {
-        throw new BadRequestException('Um cliente com o mesmo CPF já existe!');
-      }
     }
 
     if (updateClienteDto.numeroMatricula) {
@@ -173,29 +166,38 @@ export class ClienteService {
       }
     }
 
+    const newSenha = this.authService.hashPassword(updateClienteDto.senha ?? '');
+    const senha = updateClienteDto.senha ? newSenha : undefined;
+
+    const { email, nascimento, nome, telefone } = updateClienteDto;
+
     return await this.clienteRepository.update(
       {
-        matricula: {
-          update: {
-            matricula: {
-              set: updateClienteDto.numeroMatricula,
-            },
-          },
-        },
-        categoria: {
-          update: {
-            id: {
-              set: updateClienteDto.idCategoria,
-            },
-          },
-        },
-        cpf: updateClienteDto.cpf,
-        email: updateClienteDto.email,
-        nascimento: updateClienteDto.nascimento,
-        nome: updateClienteDto.nome,
-        telefone: updateClienteDto.telefone,
+        email: email || undefined,
+        nascimento: nascimento || undefined,
+        nome: nome || undefined,
+        telefone: telefone || undefined,
+        senha,
+        matricula: updateClienteDto.numeroMatricula
+          ? {
+              update: {
+                matricula: {
+                  set: updateClienteDto.numeroMatricula,
+                },
+              },
+            }
+          : undefined,
+        categoria: updateClienteDto.idCategoria
+          ? {
+              update: {
+                id: {
+                  set: updateClienteDto.idCategoria,
+                },
+              },
+            }
+          : undefined,
       },
-      { cpf: cpf },
+      { cpf },
     );
   }
 }
