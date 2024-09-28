@@ -6,6 +6,7 @@ import { UpdateClienteDto } from './dto/update-cliente.dto';
 import { CategoriaRepository } from 'src/categoria/categoria.repository';
 import { ClienteRepository } from './cliente.repository';
 import { MatriculaRepository } from 'src/matricula/matricula.repository';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class ClienteService {
@@ -69,9 +70,35 @@ export class ClienteService {
       delete cliente.senha;
       delete cliente.idCategoria;
       delete cliente.idMatricula;
-      delete cliente.categoria.id;
       return cliente;
     });
+  }
+
+  async searchByCPF(cpf: string) {
+    const cliente = await this.clienteRepository.findOne({ cpf });
+    if (!cliente) throw new NotFoundException('Não existe nenhum cliente com este CPF!');
+
+    delete cliente.id;
+    delete cliente.senha;
+    delete cliente.idCategoria;
+    delete cliente.idMatricula;
+    delete cliente.matricula.id;
+
+    return cliente;
+  }
+
+  async searchMany(where: Prisma.ClienteWhereInput) {
+    const clientes = await this.clienteRepository.findMany(where);
+
+    clientes.forEach((cliente) => {
+      delete cliente.id;
+      delete cliente.senha;
+      delete cliente.idCategoria;
+      delete cliente.idMatricula;
+      delete cliente.matricula.id;
+    });
+
+    return clientes;
   }
 
   async getManyByCpf(cpf: string) {
@@ -81,8 +108,8 @@ export class ClienteService {
       delete cliente.id;
       delete cliente.senha;
       delete cliente.idCategoria;
-      delete cliente.categoria.id;
       delete cliente.idMatricula;
+      delete cliente.matricula.id;
     });
 
     return clientes;
@@ -95,8 +122,8 @@ export class ClienteService {
       delete cliente.id;
       delete cliente.senha;
       delete cliente.idCategoria;
-      delete cliente.categoria.id;
       delete cliente.idMatricula;
+      delete cliente.matricula.id;
     });
 
     return clientes;
@@ -109,8 +136,8 @@ export class ClienteService {
       delete cliente.id;
       delete cliente.senha;
       delete cliente.idCategoria;
-      delete cliente.categoria.id;
       delete cliente.idMatricula;
+      delete cliente.matricula.id;
 
       return cliente;
     });

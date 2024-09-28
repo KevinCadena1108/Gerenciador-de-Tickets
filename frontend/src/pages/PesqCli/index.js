@@ -37,17 +37,17 @@ function PesqCli() {
   };
 
   const pesquisar = () => {
-    var url = 'http://localhost:3001/cliente';
+    var url = 'http://localhost:3001/cliente/pesquisar?';
 
     switch (metodoPesquisa) {
       case MetodoPesquisa.NOME:
-        url += `/nome/${dadosPesquisa}`;
+        url += `nome=${dadosPesquisa}`;
         break;
       case MetodoPesquisa.CPF:
-        url += `/cpf/${dadosPesquisa}`;
+        url += `cpf=${dadosPesquisa}`;
         break;
       case MetodoPesquisa.MATRICULA:
-        url += `/matricula/${dadosPesquisa}`;
+        url += `matricula=${dadosPesquisa}`;
         break;
       default:
         mostrarMensagemSnackbar('Método de pesquisa inválido!', true);

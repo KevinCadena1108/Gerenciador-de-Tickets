@@ -6,7 +6,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class ClienteRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  private async findOne(where: Prisma.ClienteWhereUniqueInput) {
+  async findOne(where: Prisma.ClienteWhereUniqueInput) {
     return await this.prismaService.cliente.findUnique({
       where,
       include: { matricula: true, categoria: true },
@@ -14,7 +14,7 @@ export class ClienteRepository {
     });
   }
 
-  private async findMany(where: Prisma.ClienteWhereInput) {
+  async findMany(where: Prisma.ClienteWhereInput) {
     return await this.prismaService.cliente.findMany({
       where,
       include: {

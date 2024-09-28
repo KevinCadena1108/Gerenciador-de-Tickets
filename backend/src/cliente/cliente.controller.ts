@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { CreateClienteDto } from './dto/create-cliente.dto';
 import { ClienteService } from './cliente.service';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
@@ -17,19 +17,41 @@ export class ClienteController {
     return await this.clienteService.getAll();
   }
 
-  @Get('matricula/:matricula')
-  async getByMatricula(@Param('matricula') matricula: string) {
-    return await this.clienteService.getManyByMatricula(matricula);
+  @Get('pesquisar')
+  async search(
+    @Query('matricula') matricula?: string,
+    @Query('cpf') cpf?: string,
+    @Query('nome') nome?: string,
+  ) {
+    return await this.clienteService.searchMany({
+      AND: [
+        {
+          matricula: {
+            matricula: {
+              contains: matricula,
+              mode: 'insensitive',
+            },
+          },
+        },
+        {
+          cpf: {
+            contains: cpf,
+            mode: 'insensitive',
+          },
+        },
+        {
+          nome: {
+            contains: nome,
+            mode: 'insensitive',
+          },
+        },
+      ],
+    });
   }
 
-  @Get('cpf/:cpf')
-  async getByCpf(@Param('cpf') cpf: string) {
-    return await this.clienteService.getManyByCpf(cpf);
-  }
-
-  @Get('nome/:nome')
-  async getByNome(@Param('nome') nome: string) {
-    return await this.clienteService.getByNome(nome);
+  @Get(':cpf')
+  async searchByCPF(@Param('cpf') cpf: string) {
+    return await this.clienteService.searchByCPF(cpf);
   }
 
   @Put(':cpf')
