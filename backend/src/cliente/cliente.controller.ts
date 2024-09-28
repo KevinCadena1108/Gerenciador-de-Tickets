@@ -1,6 +1,7 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { CreateClienteDto } from './dto/create-cliente.dto';
 import { ClienteService } from './cliente.service';
+import { UpdateClienteDto } from './dto/update-cliente.dto';
 
 @Controller('cliente')
 export class ClienteController {
@@ -29,5 +30,13 @@ export class ClienteController {
   @Get('nome/:nome')
   async getByNome(@Param('nome') nome: string) {
     return await this.clienteService.getByNome(nome);
+  }
+
+  @Put(':cpf')
+  async updateCliente(
+    @Body() updateClienteDto: Partial<UpdateClienteDto>,
+    @Param('cpf') cpf: string,
+  ) {
+    return await this.clienteService.updateCliente(cpf, updateClienteDto);
   }
 }
