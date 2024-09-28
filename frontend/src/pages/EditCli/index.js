@@ -86,7 +86,7 @@ function EdiCli() {
       senha: senha === '' ? undefined : senha,
       numeroMatricula: matricula,
       idCategoria: categoria,
-      nascimento,
+      //nascimento,
     };
 
     axios
@@ -193,6 +193,7 @@ function EdiCli() {
                 label="Data de nascimento"
                 value={nascimento}
                 onChange={(newDate) => setNascimento(newDate)}
+                disabled
                 format="DD/MM/YYYY"
                 sx={{ marginLeft: '20px' }}
               />

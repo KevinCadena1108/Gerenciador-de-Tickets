@@ -148,56 +148,49 @@ export class ClienteService {
     if (!cliente) {
       throw new NotFoundException('O cliente não foi encontrado!');
     }
-
+  
     if (updateClienteDto.numeroMatricula) {
-      if (cliente.matricula.matricula === updateClienteDto.numeroMatricula) return;
-      const oldCliente = await this.matriculaRepository.getOneByMatricula(
-        updateClienteDto.numeroMatricula,
-      );
-      if (oldCliente) {
-        throw new BadRequestException('A matrícula já está cadastrada em outro cliente!');
+      if (cliente.matricula.matricula !== updateClienteDto.numeroMatricula) {
+        const oldCliente = await this.matriculaRepository.getOneByMatricula(updateClienteDto.numeroMatricula);
+        if (oldCliente) {
+          throw new BadRequestException('A matrícula já está cadastrada em outro cliente!');
+        }
       }
     }
-
+  
     if (updateClienteDto.idCategoria && updateClienteDto.idCategoria !== cliente.idCategoria) {
       const categoriaExiste = await this.categoriaRepository.getById(updateClienteDto.idCategoria);
       if (!categoriaExiste) {
         throw new NotFoundException('A categoria informada não existe!');
       }
     }
-
-    const newSenha = this.authService.hashPassword(updateClienteDto.senha ?? '');
-    const senha = updateClienteDto.senha ? newSenha : undefined;
-
-    const { email, nascimento, nome, telefone } = updateClienteDto;
-
-    return await this.clienteRepository.update(
-      {
-        email: email || undefined,
-        nascimento: nascimento || undefined,
-        nome: nome || undefined,
-        telefone: telefone || undefined,
-        senha,
-        matricula: updateClienteDto.numeroMatricula
-          ? {
-              update: {
-                matricula: {
-                  set: updateClienteDto.numeroMatricula,
-                },
-              },
-            }
-          : undefined,
-        categoria: updateClienteDto.idCategoria
-          ? {
-              update: {
-                id: {
-                  set: updateClienteDto.idCategoria,
-                },
-              },
-            }
-          : undefined,
-      },
-      { cpf },
-    );
+  
+    const newSenha = updateClienteDto.senha ? this.authService.hashPassword(updateClienteDto.senha) : undefined;
+  
+    const updateData: any = {
+      email: updateClienteDto.email || cliente.email,
+      nascimento: updateClienteDto.nascimento || cliente.nascimento,
+      nome: updateClienteDto.nome || cliente.nome,
+      telefone: updateClienteDto.telefone || cliente.telefone,
+      senha: newSenha || cliente.senha,
+    };
+  
+    if (updateClienteDto.numeroMatricula) {
+      updateData.matricula = {
+        update: {
+          matricula: updateClienteDto.numeroMatricula,
+        },
+      };
+    }
+  
+    if (updateClienteDto.idCategoria) {
+      updateData.categoria = {
+        connect: {
+          id: updateClienteDto.idCategoria,
+        },
+      };
+    }
+  
+    return await this.clienteRepository.update(updateData, { cpf });
   }
 }
