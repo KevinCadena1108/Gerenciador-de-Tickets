@@ -4,14 +4,14 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateClienteDto } from './dto/create-cliente.dto';
 import { AuthService } from 'src/auth/auth.service';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
-import { CategoriaService } from 'src/categoria/categoria.service';
+import { CategoriaRepository } from 'src/categoria/categoria.repository';
 
 @Injectable()
 export class ClienteService {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly authService: AuthService,
-    private readonly categoriaService: CategoriaService,
+    private readonly categoriaRepository: CategoriaRepository,
   ) {}
 
   async createCliente(createClienteDto: CreateClienteDto) {
@@ -65,6 +65,7 @@ export class ClienteService {
 
     delete newCliente.id;
     delete newCliente.senha;
+    delete newCliente.idMatricula;
 
     return newCliente;
   }
@@ -82,13 +83,8 @@ export class ClienteService {
       delete cliente.id;
       delete cliente.senha;
       delete cliente.idCategoria;
+      delete cliente.idMatricula;
       delete cliente.categoria.id;
-
-      cliente.matricula.forEach((matricula) => {
-        delete matricula.id;
-        delete matricula.idCliente;
-      });
-
       return cliente;
     });
   }
@@ -107,11 +103,7 @@ export class ClienteService {
       delete cliente.senha;
       delete cliente.idCategoria;
       delete cliente.categoria.id;
-
-      cliente.matricula.forEach((matricula) => {
-        delete matricula.id;
-        delete matricula.idCliente;
-      });
+      delete cliente.idMatricula;
     });
 
     return clientes;
@@ -121,7 +113,10 @@ export class ClienteService {
     const clientes = await this.prismaService.cliente.findMany({
       where: {
         matricula: {
-          some: { matricula: { contains: matricula, mode: 'insensitive' } },
+          matricula: {
+            contains: matricula,
+            mode: 'insensitive',
+          },
         },
       },
       include: {
@@ -135,11 +130,7 @@ export class ClienteService {
       delete cliente.senha;
       delete cliente.idCategoria;
       delete cliente.categoria.id;
-
-      cliente.matricula.forEach((matricula) => {
-        delete matricula.id;
-        delete matricula.idCliente;
-      });
+      delete cliente.idMatricula;
     });
 
     return clientes;
@@ -159,11 +150,7 @@ export class ClienteService {
       delete cliente.senha;
       delete cliente.idCategoria;
       delete cliente.categoria.id;
-
-      cliente.matricula.forEach((matricula) => {
-        delete matricula.id;
-        delete matricula.idCliente;
-      });
+      delete cliente.idMatricula;
 
       return cliente;
     });
@@ -188,10 +175,8 @@ export class ClienteService {
     }
 
     if (updateClienteDto.numeroMatricula) {
-      const propriaMatricula = cliente.matricula.find(
-        (m) => m.matricula === updateClienteDto.numeroMatricula,
-      );
-      if (propriaMatricula) return;
+      if (cliente.matricula.matricula === updateClienteDto.numeroMatricula)
+        return;
 
       const oldCliente = await this.getByMatricula(
         updateClienteDto.numeroMatricula,
@@ -207,7 +192,7 @@ export class ClienteService {
       updateClienteDto.idCategoria &&
       updateClienteDto.idCategoria !== cliente.idCategoria
     ) {
-      const categorias = await this.categoriaService.getAll();
+      const categorias = await this.categoriaRepository.getAll();
       const categoriaExiste = categorias.find(
         (c) => c.id === updateClienteDto.idCategoria,
       );
@@ -221,11 +206,18 @@ export class ClienteService {
       data: {
         matricula: {
           update: {
-            data: { matricula: updateClienteDto.numeroMatricula },
-            where: { id: cliente.matricula[0].id },
+            matricula: {
+              set: updateClienteDto.numeroMatricula,
+            },
           },
         },
-        idCategoria: updateClienteDto.idCategoria,
+        categoria: {
+          update: {
+            id: {
+              set: updateClienteDto.idCategoria,
+            },
+          },
+        },
         cpf: updateClienteDto.cpf,
         email: updateClienteDto.email,
         nascimento: updateClienteDto.nascimento,

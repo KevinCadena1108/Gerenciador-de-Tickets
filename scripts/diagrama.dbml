@@ -9,7 +9,6 @@ table matricula {
   matricula char(10) [unique]
   is_ativo boolean [not null, default: true]
   atualizado_em timestamp [not null]
-  id_cliente int [ref: - cliente.id]
 }
 
 table cliente {
@@ -22,4 +21,5 @@ table cliente {
   saldo decimal (10, 2) [not null, default: 0.0]
   senha varchar(145) [not null]
   id_categoria int [ref: - categoria.id]
+  id_matricula int [ref: - matricula.id]
 }
