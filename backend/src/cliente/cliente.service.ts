@@ -1,65 +1,56 @@
 import { BadRequestException } from '@nestjs/common';
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateClienteDto } from './dto/create-cliente.dto';
 import { AuthService } from 'src/auth/auth.service';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
 import { CategoriaRepository } from 'src/categoria/categoria.repository';
+import { ClienteRepository } from './cliente.repository';
+import { MatriculaRepository } from 'src/matricula/matricula.repository';
 
 @Injectable()
 export class ClienteService {
   constructor(
-    private readonly prismaService: PrismaService,
     private readonly authService: AuthService,
     private readonly categoriaRepository: CategoriaRepository,
+    private readonly matriculaRepository: MatriculaRepository,
+    private readonly clienteRepository: ClienteRepository,
   ) {}
 
   async createCliente(createClienteDto: CreateClienteDto) {
-    const cliente = await this.prismaService.cliente.findFirst({
-      where: { cpf: createClienteDto.cpf },
-    });
+    const { cpf, numeroMatricula, idCategoria } = createClienteDto;
 
+    const cliente = await this.clienteRepository.getOneByCPF(cpf);
     if (cliente) {
       throw new BadRequestException('O CPF informado já está cadastrado');
     }
 
-    const matricula = await this.prismaService.matricula.findFirst({
-      where: { matricula: createClienteDto.numeroMatricula },
-    });
-
+    const matricula = await this.matriculaRepository.getOneByMatricula(numeroMatricula);
     if (matricula) {
-      throw new BadRequestException(
-        'O número de matrícula informado já está cadastrado',
-      );
+      throw new BadRequestException('O número de matrícula informado já está cadastrado');
     }
 
-    const categoria = await this.prismaService.categoria.findFirst({
-      where: { id: createClienteDto.idCategoria },
-    });
-
+    const categoria = await this.categoriaRepository.getById(idCategoria);
     if (!categoria) {
       throw new BadRequestException('A categoria informada não existe');
     }
 
     const hashedPass = this.authService.hashPassword(createClienteDto.senha);
-    const newCliente = await this.prismaService.cliente.create({
-      data: {
-        cpf: createClienteDto.cpf,
-        email: createClienteDto.email,
-        nascimento: createClienteDto.nascimento,
-        nome: createClienteDto.nome,
-        senha: hashedPass,
-        telefone: createClienteDto.telefone,
-        matricula: {
-          create: {
-            matricula: createClienteDto.numeroMatricula,
-            isAtivo: true,
-            atualizadoEm: new Date(Date.now()),
-          },
+    const newCliente = await this.clienteRepository.create({
+      cpf: createClienteDto.cpf,
+      email: createClienteDto.email,
+      nascimento: createClienteDto.nascimento,
+      nome: createClienteDto.nome,
+      senha: hashedPass,
+      telefone: createClienteDto.telefone,
+      matricula: {
+        create: {
+          matricula: createClienteDto.numeroMatricula,
+          isAtivo: true,
+          atualizadoEm: new Date(Date.now()),
         },
-        categoria: {
-          connect: { id: createClienteDto.idCategoria },
-        },
+      },
+      categoria: {
+        connect: { id: createClienteDto.idCategoria },
       },
     });
 
@@ -71,13 +62,7 @@ export class ClienteService {
   }
 
   async getAll() {
-    const clientes = await this.prismaService.cliente.findMany({
-      relationLoadStrategy: 'join',
-      include: {
-        matricula: true,
-        categoria: true,
-      },
-    });
+    const clientes = await this.clienteRepository.getAll();
 
     return clientes.map((cliente) => {
       delete cliente.id;
@@ -89,14 +74,8 @@ export class ClienteService {
     });
   }
 
-  async getByCpf(cpf: string) {
-    const clientes = await this.prismaService.cliente.findMany({
-      where: { cpf: { contains: cpf, mode: 'insensitive' } },
-      include: {
-        matricula: true,
-        categoria: true,
-      },
-    });
+  async getManyByCpf(cpf: string) {
+    const clientes = await this.clienteRepository.getManyByCPF(cpf);
 
     clientes.forEach((cliente) => {
       delete cliente.id;
@@ -109,21 +88,8 @@ export class ClienteService {
     return clientes;
   }
 
-  async getByMatricula(matricula: string) {
-    const clientes = await this.prismaService.cliente.findMany({
-      where: {
-        matricula: {
-          matricula: {
-            contains: matricula,
-            mode: 'insensitive',
-          },
-        },
-      },
-      include: {
-        matricula: true,
-        categoria: true,
-      },
-    });
+  async getManyByMatricula(matricula: string) {
+    const clientes = await this.clienteRepository.getManyByMatricula(matricula);
 
     clientes.forEach((cliente) => {
       delete cliente.id;
@@ -137,13 +103,7 @@ export class ClienteService {
   }
 
   async getByNome(nome: string) {
-    const clientes = await this.prismaService.cliente.findMany({
-      where: { nome: { contains: nome, mode: 'insensitive' } },
-      include: {
-        matricula: true,
-        categoria: true,
-      },
-    });
+    const clientes = await this.clienteRepository.getManyByNome(nome);
 
     return clientes.map((cliente) => {
       delete cliente.id;
@@ -156,54 +116,38 @@ export class ClienteService {
     });
   }
 
-  async updateCliente(
-    cpf: string,
-    updateClienteDto: Partial<UpdateClienteDto>,
-  ) {
-    const clientes = await this.getByCpf(cpf);
-    if (clientes.length === 0) {
+  async updateCliente(cpf: string, updateClienteDto: Partial<UpdateClienteDto>) {
+    const cliente = await this.clienteRepository.getOneByCPF(cpf);
+    if (!cliente) {
       throw new NotFoundException('O cliente não foi encontrado!');
     }
 
-    const cliente = clientes[0];
-
     if (updateClienteDto.cpf) {
-      const cpfExiste = await this.getByCpf(updateClienteDto.cpf);
+      const cpfExiste = await this.clienteRepository.getOneByCPF(updateClienteDto.cpf);
       if (cpfExiste) {
         throw new BadRequestException('Um cliente com o mesmo CPF já existe!');
       }
     }
 
     if (updateClienteDto.numeroMatricula) {
-      if (cliente.matricula.matricula === updateClienteDto.numeroMatricula)
-        return;
-
-      const oldCliente = await this.getByMatricula(
+      if (cliente.matricula.matricula === updateClienteDto.numeroMatricula) return;
+      const oldCliente = await this.matriculaRepository.getOneByMatricula(
         updateClienteDto.numeroMatricula,
       );
-      if (oldCliente.length > 0) {
-        throw new BadRequestException(
-          'A matrícula já está cadastrada em outro cliente!',
-        );
+      if (oldCliente) {
+        throw new BadRequestException('A matrícula já está cadastrada em outro cliente!');
       }
     }
 
-    if (
-      updateClienteDto.idCategoria &&
-      updateClienteDto.idCategoria !== cliente.idCategoria
-    ) {
-      const categorias = await this.categoriaRepository.getAll();
-      const categoriaExiste = categorias.find(
-        (c) => c.id === updateClienteDto.idCategoria,
-      );
+    if (updateClienteDto.idCategoria && updateClienteDto.idCategoria !== cliente.idCategoria) {
+      const categoriaExiste = await this.categoriaRepository.getById(updateClienteDto.idCategoria);
       if (!categoriaExiste) {
         throw new NotFoundException('A categoria informada não existe!');
       }
     }
 
-    return await this.prismaService.cliente.update({
-      where: { cpf },
-      data: {
+    return await this.clienteRepository.update(
+      {
         matricula: {
           update: {
             matricula: {
@@ -224,6 +168,7 @@ export class ClienteService {
         nome: updateClienteDto.nome,
         telefone: updateClienteDto.telefone,
       },
-    });
+      { cpf: cpf },
+    );
   }
 }

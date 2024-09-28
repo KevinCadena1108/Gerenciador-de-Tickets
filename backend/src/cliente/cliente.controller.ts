@@ -19,12 +19,12 @@ export class ClienteController {
 
   @Get('matricula/:matricula')
   async getByMatricula(@Param('matricula') matricula: string) {
-    return await this.clienteService.getByMatricula(matricula);
+    return await this.clienteService.getManyByMatricula(matricula);
   }
 
   @Get('cpf/:cpf')
   async getByCpf(@Param('cpf') cpf: string) {
-    return await this.clienteService.getByCpf(cpf);
+    return await this.clienteService.getManyByCpf(cpf);
   }
 
   @Get('nome/:nome')
