@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
-import { Box, Button, FormControl, Grid, InputLabel, MenuItem, Paper, Select, Table } from '@mui/material';
+import { Box, Button, FormControl, Grid, InputLabel, MenuItem, Paper, Select, Table,  } from '@mui/material';
 import { TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import { TextField, Typography, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
+import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import LockIcon from '@mui/icons-material/Lock';
 import Header from '../../components/Header';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
@@ -29,6 +30,9 @@ function PesqCli() {
   const [isErroSnackbar, setIsErroSnackbar] = useState(false);
   const [mensagemSnackbar, setMensagemSnackbar] = useState('');
   const [isSnackbarAberto, setIsSnackbarAberto] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+
 
   const mostrarMensagemSnackbar = (mensagem, erro) => {
     setIsErroSnackbar(erro);
@@ -85,6 +89,11 @@ function PesqCli() {
   const handleClose = () => {
     setOpen(false);
     setSelectedClient(null);
+    setIsDialogOpen(false);
+  };
+
+  const handleDialogOpen = () => {
+    setIsDialogOpen(true);
   };
 
   const mudarStatusMatricula = (status) => {
@@ -120,6 +129,10 @@ function PesqCli() {
 
   const handleClear = () => {
     window.location.reload();
+  };
+
+  const handleImageChange = (event) => {
+    setSelectedImage(event.target.files[0]);
   };
 
   return (
@@ -205,6 +218,13 @@ function PesqCli() {
                         />
                       </Link>
                       <Link>
+                      
+                        <PhotoCamera
+                          style={{ color: 'black', cursor: 'pointer' }}
+                          onClick={handleDialogOpen}
+                        />
+                      </Link>
+                      <Link>
                         {row.matricula.isAtivo ? (
                           <LockIcon
                             style={{ color: 'black', cursor: 'pointer' }}
@@ -249,6 +269,28 @@ function PesqCli() {
           </Button>
         </DialogActions>
       </Dialog>
+
+      <Dialog open={isDialogOpen} onClose={handleClose}>
+        <DialogTitle>Upload da Imagem para o Reconhecimento Facial</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="image"
+            //label=""
+            type="file"
+            fullWidth
+            variant="standard"
+            inputProps={{ accept: 'image/png' }}
+            onChange={handleImageChange}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancelar</Button>
+          <Button onClick={handleClose}>Enviar</Button>
+        </DialogActions>
+      </Dialog>
+
     </Box>
   );
 }
