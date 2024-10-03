@@ -93,6 +93,9 @@ function EdiCli() {
       .put(`http://localhost:3001/cliente/${contextCpf}`, cliente) // Rota para atualizar os dados
       .then(() => {
         abrirSnackbar('Informações do cliente editadas com sucesso!', false);
+        setTimeout(() => {
+          navigate('/pesqcli'); // Redireciona para a página de pesquisa após a edição
+        }, 500); // Atraso de 2 segundos
       })
       .catch(() => {
         abrirSnackbar('Ocorreu um erro ao editar as informações do cliente!', true);
@@ -172,12 +175,13 @@ function EdiCli() {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <FormControl sx={{ width: '280px' }}>
+            <FormControl sx={{ width: '220px' }}>
               <InputLabel id="categoria-label">Categoria</InputLabel>
               <Select
-                labelId="categoria-label"
-                id="categoria"
-                name="categoria"
+                labelId="demo-select-small-label"
+                id="demo-select-small"
+                label="Categoria"
+                defaultValue=""
                 value={categoria || ''}
                 onChange={(e) => setCategoria(e.target.value)}
               >
@@ -188,6 +192,17 @@ function EdiCli() {
                 ))}
               </Select>
             </FormControl>
+            <FormControl sx={{ width: '220px', marginLeft:"20px" }}>
+            <InputLabel id="demo-select-small-label">Administrador</InputLabel>
+            <Select
+              labelId="demo-select-small-label"
+              id="demo-select-small"
+              label="Administrador"
+            >
+              <MenuItem value="sim">Sim</MenuItem>
+              <MenuItem value="nao">Não</MenuItem>
+            </Select>
+          </FormControl>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
                 label="Data de nascimento"

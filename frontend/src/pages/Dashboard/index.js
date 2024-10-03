@@ -37,7 +37,7 @@ function Dashboard() {
             </Link>
             <Link to="/cadaluno">
               <Button variant="contained" sx={buttonStyle}>
-                Cadastrar Aluno
+                Cadastrar Cliente
               </Button>
             </Link>
             <Button variant="contained" sx={buttonStyle}>

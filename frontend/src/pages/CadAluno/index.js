@@ -157,7 +157,7 @@ function CadAluno() {
             />
           </Grid>
           <Grid item xs={12} sm={6}>
-            <FormControl sx={{ width: '280px' }}>
+            <FormControl sx={{ width: '220px' }}>
               <InputLabel id="demo-select-small-label">Categoria</InputLabel>
               <Select
                 labelId="demo-select-small-label"
@@ -174,6 +174,17 @@ function CadAluno() {
                 ))}
               </Select>
             </FormControl>
+          <FormControl sx={{ width: '220px', marginLeft:"20px" }}>
+            <InputLabel id="demo-select-small-label">Administrador</InputLabel>
+            <Select
+              labelId="demo-select-small-label"
+              id="demo-select-small"
+              label="Administrador"
+            >
+              <MenuItem value="sim">Sim</MenuItem>
+              <MenuItem value="nao">Não</MenuItem>
+            </Select>
+          </FormControl>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
                 label="Data de nascimento"
@@ -186,6 +197,7 @@ function CadAluno() {
                 }}
               />
             </LocalizationProvider>
+
           </Grid>
           <Grid item xs={12} sm={6}>
             <Button
