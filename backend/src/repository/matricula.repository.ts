@@ -16,10 +16,7 @@ export class MatriculaRepository {
     });
   }
 
-  async updateByMatricula(
-    matricula: string,
-    data: Prisma.MatriculaUpdateInput,
-  ) {
+  async updateByMatricula(matricula: string, data: Prisma.MatriculaUpdateInput) {
     return await this.prismaService.matricula.update({
       where: { matricula },
       data,

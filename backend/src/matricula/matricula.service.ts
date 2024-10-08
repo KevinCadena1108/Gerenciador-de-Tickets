@@ -1,13 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { MatriculaRepository } from './matricula.repository';
+import { MatriculaRepository } from '../repository/matricula.repository';
 
 @Injectable()
 export class MatriculaService {
   constructor(private readonly matriculaRepository: MatriculaRepository) {}
 
   async ativarMatricula(matricula: string) {
-    const oldMatricula =
-      await this.matriculaRepository.getOneByMatricula(matricula);
+    const oldMatricula = await this.matriculaRepository.getOneByMatricula(matricula);
 
     if (!oldMatricula) {
       throw new NotFoundException('Matrícula não encontrada');
@@ -21,8 +20,7 @@ export class MatriculaService {
   }
 
   async desativarMatricula(matricula: string) {
-    const oldMatricula =
-      await this.matriculaRepository.getOneByMatricula(matricula);
+    const oldMatricula = await this.matriculaRepository.getOneByMatricula(matricula);
 
     if (!oldMatricula) {
       throw new NotFoundException('Matrícula não encontrada');

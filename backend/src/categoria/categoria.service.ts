@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { CategoriaRepository } from 'src/repository/categoria.repository';
 
 @Injectable()
 export class CategoriaService {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(private readonly categoriaRepository: CategoriaRepository) {}
 
   async getAll() {
-    return await this.prismaService.categoria.findMany();
+    return await this.categoriaRepository.getAll();
   }
 }

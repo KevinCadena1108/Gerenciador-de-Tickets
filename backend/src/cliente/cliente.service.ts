@@ -3,9 +3,9 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateClienteDto } from './dto/create-cliente.dto';
 import { AuthService } from 'src/auth/auth.service';
 import { UpdateClienteDto } from './dto/update-cliente.dto';
-import { CategoriaRepository } from 'src/categoria/categoria.repository';
-import { ClienteRepository } from './cliente.repository';
-import { MatriculaRepository } from 'src/matricula/matricula.repository';
+import { CategoriaRepository } from 'src/repository/categoria.repository';
+import { ClienteRepository } from '../repository/cliente.repository';
+import { MatriculaRepository } from 'src/repository/matricula.repository';
 import { Prisma } from '@prisma/client';
 
 @Injectable()
@@ -148,25 +148,29 @@ export class ClienteService {
     if (!cliente) {
       throw new NotFoundException('O cliente não foi encontrado!');
     }
-  
+
     if (updateClienteDto.numeroMatricula) {
       if (cliente.matricula.matricula !== updateClienteDto.numeroMatricula) {
-        const oldCliente = await this.matriculaRepository.getOneByMatricula(updateClienteDto.numeroMatricula);
+        const oldCliente = await this.matriculaRepository.getOneByMatricula(
+          updateClienteDto.numeroMatricula,
+        );
         if (oldCliente) {
           throw new BadRequestException('A matrícula já está cadastrada em outro cliente!');
         }
       }
     }
-  
+
     if (updateClienteDto.idCategoria && updateClienteDto.idCategoria !== cliente.idCategoria) {
       const categoriaExiste = await this.categoriaRepository.getById(updateClienteDto.idCategoria);
       if (!categoriaExiste) {
         throw new NotFoundException('A categoria informada não existe!');
       }
     }
-  
-    const newSenha = updateClienteDto.senha ? this.authService.hashPassword(updateClienteDto.senha) : undefined;
-  
+
+    const newSenha = updateClienteDto.senha
+      ? this.authService.hashPassword(updateClienteDto.senha)
+      : undefined;
+
     const updateData: any = {
       email: updateClienteDto.email || cliente.email,
       nascimento: updateClienteDto.nascimento || cliente.nascimento,
@@ -174,7 +178,7 @@ export class ClienteService {
       telefone: updateClienteDto.telefone || cliente.telefone,
       senha: newSenha || cliente.senha,
     };
-  
+
     if (updateClienteDto.numeroMatricula) {
       updateData.matricula = {
         update: {
@@ -182,7 +186,7 @@ export class ClienteService {
         },
       };
     }
-  
+
     if (updateClienteDto.idCategoria) {
       updateData.categoria = {
         connect: {
@@ -190,7 +194,7 @@ export class ClienteService {
         },
       };
     }
-  
+
     return await this.clienteRepository.update(updateData, { cpf });
   }
 }
