@@ -20,6 +20,7 @@ table cliente {
   nascimento date [not null]
   saldo decimal (10, 2) [not null, default: 0.0]
   senha varchar(145) [not null]
+  is_administrador boolean [not null, default: false]
   id_categoria int [ref: - categoria.id]
   id_matricula int [ref: - matricula.id]
 }

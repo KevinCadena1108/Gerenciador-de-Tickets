@@ -23,6 +23,7 @@ CREATE TABLE
     nascimento DATE NOT NULL,
     saldo DECIMAL(10, 2) NOT NULL DEFAULT 0.0,
     senha VARCHAR(145) NOT NULL,
+    is_administrador BOOLEAN NOT NULL DEFAULT FALSE,
     id_categoria INT NOT NULL REFERENCES categoria (id),
     id_matricula INT NOT NULL REFERENCES matricula (id)
   );
