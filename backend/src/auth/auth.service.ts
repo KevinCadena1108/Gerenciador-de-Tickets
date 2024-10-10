@@ -23,7 +23,8 @@ export class AuthService {
     const isValidPass = this.verifyHash(senha, hashedPassword);
     if (!isValidPass) throw badRequest;
 
-    return this.signToken(cliente.id)
+    const adm = cliente.isAdministrador
+    return {token: this.signToken(cliente.id, adm), administrador: adm}
   }
 
   hashPassword(password: string, passwordSalt?: string): string {
@@ -41,9 +42,10 @@ export class AuthService {
     return salt === oldSalt && hash === oldHash;
   }
 
-  signToken(userId: number) {
+  signToken(userId: number, isAdministrador: boolean) {
     const payload = {
       sub: userId,
+      administrador: isAdministrador
     };
 
     const secret = this.configService.getOrThrow<string>("JWT_SECRET");

@@ -9,8 +9,8 @@ export class AuthController {
 
   @Post('signin')
   async signIn(@Body() dto: SignInDto, @Res({passthrough: true}) res: Response) {
-    const token = await this.authService.signIn(dto);
-    res.setHeader('Authorization', `Bearer ${token}`)
-    return {token}
+    const auth = await this.authService.signIn(dto);
+    res.setHeader('Authorization', `Bearer ${auth.token}`)
+    return auth
   }
 }
