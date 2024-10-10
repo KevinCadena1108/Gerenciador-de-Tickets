@@ -8,14 +8,42 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { useForm } from "react-hook-form"; // Importe useForm
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useState } from "react";
+
 
 function Login() {
   const { register, handleSubmit } = useForm(); // Inicialize useForm
+  const navigate = useNavigate();
 
-  const onSubmit = (data) => {
+  const [senha, setSenha] = useState("");
+  const [cpf, setCpf] = useState("");
+
+const limparCampos = () => {
+  setCpf("");
+  setSenha("");
+};
+
+const Logar = async (data) => {
+  try {
+    // Enviar os dados ao backend
+    await axios.post("http://localhost:3001/auth/signin", {
+      cpf: data.identificador,
+      senha: data.senha,
+    });
     console.log(data);
-  };
+    limparCampos();
+    navigate("/dashboard");
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const onSubmit = (data) => {
+  Logar(data);
+};
+
 
   return (
     <Container component="main" maxWidth="md">
@@ -69,7 +97,7 @@ function Login() {
               minLength: 4,
             })}
           />
-          <Link to="/dashboard">
+          
             <Button
               type="submit"
               fullWidth
@@ -78,7 +106,7 @@ function Login() {
             >
               Logar
             </Button>
-          </Link>
+          
         </Box>
       </Box>
     </Container>
