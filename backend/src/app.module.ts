@@ -5,7 +5,6 @@ import { AuthModule } from './auth/auth.module';
 import { ClienteModule } from './cliente/cliente.module';
 import { MatriculaModule } from './matricula/matricula.module';
 import { CategoriaModule } from './categoria/categoria.module';
-import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -14,15 +13,7 @@ import { JwtModule } from '@nestjs/jwt';
     AuthModule,
     ClienteModule,
     MatriculaModule,
-    CategoriaModule,
-    JwtModule.registerAsync({
-      useFactory: (configService: ConfigService) => ({
-        global: true,
-        secret: configService.get<string>('JWT_SECRET'),
-        signOptions: { expiresIn: '1d' },
-      }),
-      inject: [ConfigService],
-    }),
+    CategoriaModule
   ],
   controllers: [],
   providers: [],
