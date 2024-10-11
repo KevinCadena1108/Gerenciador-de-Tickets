@@ -1,4 +1,4 @@
-import { IsDateString, IsEmail, IsInt, IsNotEmpty, IsOptional } from 'class-validator';
+import { IsBoolean, IsDateString, IsEmail, IsInt, IsNotEmpty, IsOptional } from 'class-validator';
 import { IsString, Length, MaxLength, Min, MinLength } from 'class-validator';
 
 export class UpdateClienteDto {
@@ -42,4 +42,8 @@ export class UpdateClienteDto {
   @IsNotEmpty({ message: 'A senha não pode ser vazia' })
   @MinLength(8, { message: 'A senha deve possuir ao menos 8 caracteres' })
   senha: string;
+
+  @IsOptional()
+  @IsBoolean({ message: 'O campo de administrador deve ser um booleano' })
+  administrador: boolean;
 }

@@ -1,4 +1,4 @@
-import { IsDateString, IsEmail, IsInt, IsNotEmpty } from 'class-validator';
+import { IsBoolean, IsDateString, IsEmail, IsInt, IsNotEmpty } from 'class-validator';
 import { IsString, Length, MaxLength, Min, MinLength } from 'class-validator';
 
 export class CreateClienteDto {
@@ -40,4 +40,7 @@ export class CreateClienteDto {
   @IsNotEmpty({ message: 'O número de matrícula não pode ser vazio' })
   @Length(10, 10, { message: 'O número de matrícula deve ter 10 caracteres' })
   numeroMatricula: string;
+
+  @IsBoolean({ message: 'O campo de administrador deve ser um booleano' })
+  administrador: boolean;
 }

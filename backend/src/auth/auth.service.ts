@@ -10,11 +10,11 @@ export class AuthService {
   constructor(
     private readonly clienteRepository: ClienteRepository,
     private readonly jwtService: JwtService,
-    private readonly configService: ConfigService
+    private readonly configService: ConfigService,
   ) {}
 
   async signIn(dto: SignInDto) {
-    const {cpf, senha} = dto;
+    const { cpf, senha } = dto;
     const cliente = await this.clienteRepository.findOne({ cpf });
     const badRequest = new UnauthorizedException('CPF ou senha inválidos');
     if (!cliente) throw badRequest;
@@ -23,8 +23,8 @@ export class AuthService {
     const isValidPass = this.verifyHash(senha, hashedPassword);
     if (!isValidPass) throw badRequest;
 
-    const adm = cliente.isAdministrador
-    return {token: this.signToken(cliente.id, adm), administrador: adm}
+    const adm = cliente.isAdministrador;
+    return { token: this.signToken(cliente.id, adm), administrador: adm };
   }
 
   hashPassword(password: string, passwordSalt?: string): string {
@@ -45,10 +45,10 @@ export class AuthService {
   signToken(userId: number, isAdministrador: boolean) {
     const payload = {
       sub: userId,
-      administrador: isAdministrador
+      administrador: isAdministrador,
     };
 
-    const secret = this.configService.getOrThrow<string>("JWT_SECRET");
-    return this.jwtService.sign(payload, { expiresIn: "1h", secret });
+    const secret = this.configService.getOrThrow<string>('JWT_SECRET');
+    return this.jwtService.sign(payload, { expiresIn: '1h', secret });
   }
 }

@@ -43,6 +43,7 @@ export class ClienteService {
       nome: createClienteDto.nome,
       senha: hashedPass,
       telefone: createClienteDto.telefone,
+      isAdministrador: createClienteDto.administrador,
       matricula: {
         create: {
           matricula: createClienteDto.numeroMatricula,
@@ -191,6 +192,14 @@ export class ClienteService {
       updateData.categoria = {
         connect: {
           id: updateClienteDto.idCategoria,
+        },
+      };
+    }
+
+    if (updateClienteDto.administrador) {
+      updateData.isAdministrador = {
+        update: {
+          isAdministrador: updateClienteDto.administrador,
         },
       };
     }
