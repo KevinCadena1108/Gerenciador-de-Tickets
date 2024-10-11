@@ -2,29 +2,29 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { randomBytes, scryptSync, createHash } from 'crypto';
 import { ClienteRepository } from 'src/repository/cliente.repository';
+import { SignInDto } from './dto/signin.dto';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly clienteRepository: ClienteRepository,
     private readonly jwtService: JwtService,
+    private readonly configService: ConfigService
   ) {}
 
-  async signIn(cpf: string, password: string) {
+  async signIn(dto: SignInDto) {
+    const {cpf, senha} = dto;
     const cliente = await this.clienteRepository.findOne({ cpf });
     const badRequest = new UnauthorizedException('CPF ou senha inválidos');
-    if (!cliente) {
-      throw badRequest;
-    }
+    if (!cliente) throw badRequest;
 
     const hashedPassword = cliente.senha;
-    const isValidPass = this.verifyHash(password, hashedPassword);
-    if (!isValidPass) {
-      throw badRequest;
-    }
+    const isValidPass = this.verifyHash(senha, hashedPassword);
+    if (!isValidPass) throw badRequest;
 
-    const payload = { sub: cliente.id, isAdministrador: cliente.isAdministrador };
-    return { access_token: await this.jwtService.signAsync(payload) };
+    const adm = cliente.isAdministrador
+    return {token: this.signToken(cliente.id, adm), administrador: adm}
   }
 
   hashPassword(password: string, passwordSalt?: string): string {
@@ -40,5 +40,15 @@ export class AuthService {
     const [salt, hash] = hashedPass.split('.');
     const [oldSalt, oldHash] = this.hashPassword(password, salt).split('.');
     return salt === oldSalt && hash === oldHash;
+  }
+
+  signToken(userId: number, isAdministrador: boolean) {
+    const payload = {
+      sub: userId,
+      administrador: isAdministrador
+    };
+
+    const secret = this.configService.getOrThrow<string>("JWT_SECRET");
+    return this.jwtService.sign(payload, { expiresIn: "1h", secret });
   }
 }
