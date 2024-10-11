@@ -7,43 +7,42 @@ import Box from "@mui/material/Box";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import { useForm } from "react-hook-form"; // Importe useForm
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useState } from "react";
+import SnackbarMensagem from "../../components/SnackbarMensagem";
 
 
 function Login() {
-  const { register, handleSubmit } = useForm(); // Inicialize useForm
   const navigate = useNavigate();
 
   const [senha, setSenha] = useState("");
   const [cpf, setCpf] = useState("");
+
+  const [isErroSnackbar, setIsErroSnackbar] = useState(false);
+  const [mensagemSnackbar, setMensagemSnackbar] = useState('');
+  const [isSnackbarAberto, setIsSnackbarAberto] = useState(false);
+
+  const mostrarMensagemSnackbar = (mensagem, erro) => {
+    setIsErroSnackbar(erro);
+    setMensagemSnackbar(mensagem);
+    setIsSnackbarAberto(true);
+  };
 
 const limparCampos = () => {
   setCpf("");
   setSenha("");
 };
 
-const Logar = async (data) => {
+const entrar = async () => {
   try {
-    // Enviar os dados ao backend
-    await axios.post("http://localhost:3001/auth/signin", {
-      cpf: data.identificador,
-      senha: data.senha,
-    });
-    console.log(data);
+    await axios.post('http://localhost:3001/auth/signin', {cpf, senha})
     limparCampos();
-    navigate("/dashboard");
+    navigate('/dashboard')
   } catch (error) {
-    console.log(error);
+    mostrarMensagemSnackbar(error.response.data.message, true)
   }
 };
-
-const onSubmit = (data) => {
-  Logar(data);
-};
-
 
   return (
     <Container component="main" maxWidth="md">
@@ -67,22 +66,18 @@ const onSubmit = (data) => {
         </Typography>
 
         <Box
-          component="form"
-          noValidate
           sx={{ mt: 1, px: 4 }}
-          onSubmit={handleSubmit(onSubmit)}
         >
           <TextField
             margin="normal"
             required
             fullWidth
-            label="Identificador"
+            label="CPF"
             variant="standard"
             autoComplete="identificador"
             autoFocus
-            {...register("identificador", {
-              required: "Esse campo é obrigatório",
-            })}
+            value={cpf}
+            onChange={(v) => setCpf(v.target.value)}
           />
           <TextField
             margin="normal"
@@ -92,10 +87,8 @@ const onSubmit = (data) => {
             variant="standard"
             type="password"
             autoComplete="current-password"
-            {...register("senha", {
-              required: "Esse campo é obrigatório",
-              minLength: 4,
-            })}
+            value={senha}
+            onChange={(v) => setSenha(v.target.value)}
           />
           
             <Button
@@ -103,12 +96,19 @@ const onSubmit = (data) => {
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              onClick={() => entrar()}
             >
-              Logar
+              Entrar
             </Button>
           
         </Box>
       </Box>
+      <SnackbarMensagem
+          isErro={isErroSnackbar}
+          setIsAberto={setIsSnackbarAberto}
+          isAberto={isSnackbarAberto}
+          mensagem={mensagemSnackbar}
+        />
     </Container>
   );
 }
