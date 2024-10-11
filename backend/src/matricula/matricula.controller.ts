@@ -1,7 +1,10 @@
-import { Controller, Param, Post } from '@nestjs/common';
+import { Controller, Param, Post, UseGuards } from '@nestjs/common';
 import { MatriculaService } from './matricula.service';
+import { AdminGuard } from 'src/auth/guard/admin.guard';
+import { JwtGuard } from 'src/auth/guard/jwt.guard';
 
 @Controller('matricula')
+@UseGuards(JwtGuard, AdminGuard)
 export class MatriculaController {
   constructor(private readonly matriculaService: MatriculaService) {}
 
