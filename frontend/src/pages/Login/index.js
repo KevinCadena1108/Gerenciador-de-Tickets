@@ -1,7 +1,6 @@
 import React from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
-import Cookies from 'universal-cookie';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
@@ -12,11 +11,11 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useState } from 'react';
 import SnackbarMensagem from '../../components/SnackbarMensagem';
-
-const cookies = new Cookies();
+import { useAuth } from '../../components/Auth/AuthProvider';
 
 function Login() {
   const navigate = useNavigate();
+  const auth = useAuth();
 
   const [senha, setSenha] = useState('');
   const [cpf, setCpf] = useState('');
@@ -42,9 +41,7 @@ function Login() {
       const token = res.data.token;
       limparCampos();
 
-      axios.defaults.headers.common = { Authorization: `Bearer ${token}` };
-      cookies.set('administrador', res.data.administrador);
-
+      auth.updateToken(token, res.data.administrador);
       navigate('/dashboard');
     } catch (error) {
       mostrarMensagemSnackbar(error.response.data.message, true);
