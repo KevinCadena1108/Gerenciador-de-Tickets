@@ -74,6 +74,8 @@ function CadAluno() {
         abrirMensagem('Data de nascimento inválida.', true);
         return;
       }
+      const administrador = Boolean(isAdministrador);
+
 
       // Enviar os dados ao backend
       await axios.post('http://localhost:3001/cliente', {
@@ -85,6 +87,7 @@ function CadAluno() {
         numeroMatricula: matricula,
         idCategoria: categoria,
         nascimento: nascimento.toISOString(),
+        administrador,
       });
 
       limparCampos();
