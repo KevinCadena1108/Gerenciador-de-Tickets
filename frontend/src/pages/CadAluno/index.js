@@ -228,11 +228,13 @@ function CadAluno() {
               />
             </Link>
           </Grid>
+        <Box sx={{marginLeft: "auto", marginTop: "auto", marginBottom:"auto"}}>
           <Grid item xs={2}>
             <Button variant="contained" color="primary" onClick={cadastroCli} sx={{ marginLeft: '240px' }}>
               Cadastrar
             </Button>
           </Grid>
+          </Box>
         </Grid>
       </Box>
       <Dialog open={isDialogOpen} onClose={handleClose}>
