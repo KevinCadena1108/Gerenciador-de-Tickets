@@ -21,9 +21,16 @@ function Dashboard() {
       <Box sx={{ textAlign: "center", marginTop: "20px" }}>
         <Typography variant="h5"> Dashboard </Typography>
       </Box>
-      <Box sx={{ display: "flex", marginTop: "-150px" }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          marginTop: "-150px",
+        }}
+      >
         {isAdmin && (
-          <Caixa sx={{ marginLeft: "30px" }}>
+          <Caixa>
             <Box
               sx={{
                 display: "flex",

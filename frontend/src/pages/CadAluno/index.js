@@ -230,7 +230,7 @@ function CadAluno() {
           </Grid>
         <Box sx={{marginLeft: "auto", marginTop: "auto", marginBottom:"auto"}}>
           <Grid item xs={2}>
-            <Button variant="contained" color="primary" onClick={cadastroCli} sx={{ marginLeft: '240px' }}>
+            <Button variant="contained" color="primary" onClick={cadastroCli} >
               Cadastrar
             </Button>
           </Grid>
