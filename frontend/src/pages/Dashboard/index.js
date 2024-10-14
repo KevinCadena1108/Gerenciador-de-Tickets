@@ -22,33 +22,32 @@ function Dashboard() {
         <Typography variant="h5"> Dashboard </Typography>
       </Box>
       <Box sx={{ display: "flex", marginTop: "-150px" }}>
-        <Caixa sx={{ marginLeft: "30px" }}>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "flex-start",
-              height: "100%",
-              textAlign: "center",
-            }}
-          >
-            {isAdmin && (
-              <>
-                <Link to="/pesqcli">
-                  <Button variant="contained" sx={buttonStyle}>
-                    Pesquisar Cliente
-                  </Button>
-                </Link>
-                <Link to="/cadaluno">
-                  <Button variant="contained" sx={buttonStyle}>
-                    Cadastrar Cliente
-                  </Button>
-                </Link>
-              </>
-            )}
-          </Box>
-        </Caixa>
+        {isAdmin && (
+          <Caixa sx={{ marginLeft: "30px" }}>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "flex-start",
+                height: "100%",
+                textAlign: "center",
+              }}
+            >
+              <Link to="/pesqcli">
+                <Button variant="contained" sx={buttonStyle}>
+                  Pesquisar Cliente
+                </Button>
+              </Link>
+              <Link to="/cadaluno">
+                <Button variant="contained" sx={buttonStyle}>
+                  Cadastrar Cliente
+                </Button>
+              </Link>
+            </Box>
+          </Caixa>
+        )}
+
         <Caixa sx={{ marginLeft: "30px" }}>
           <AdicionarSaldo />
         </Caixa>
