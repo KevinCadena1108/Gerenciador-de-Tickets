@@ -89,7 +89,7 @@ function CadAluno() {
         nascimento: nascimento.toISOString(),
         administrador,
       });
-
+      handleImageUpload();
       limparCampos();
       abrirMensagem('Cliente cadastrado com sucesso.', false);
     } catch (error) {
@@ -109,6 +109,29 @@ function CadAluno() {
   const handleImageChange = (event) => {
     setSelectedImage(event.target.files[0]);
   };
+
+  const handleImageUpload = async () => {
+    if (!selectedImage) {
+      abrirMensagem('Nenhuma imagem selecionada.', true);
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', selectedImage);
+
+    try {
+      await axios.post('http://localhost:3001/imagem/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      //abrirMensagem('Imagem enviada com sucesso.', false);
+      handleClose();
+    } catch (error) {
+      abrirMensagem('Erro ao enviar a imagem.', true);
+    }
+  };
+
   return (
     <Box>
       <Header />
@@ -253,7 +276,7 @@ function CadAluno() {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancelar</Button>
-          <Button onClick={handleClose}>Enviar</Button>
+          <Button onClick={handleClose}>Salvar</Button>
         </DialogActions>
       </Dialog>
     </Box>
