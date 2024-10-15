@@ -6,6 +6,7 @@ import { ClienteModule } from './cliente/cliente.module';
 import { MatriculaModule } from './matricula/matricula.module';
 import { CategoriaModule } from './categoria/categoria.module';
 import { SaldoModule } from './saldo/saldo.module';
+import { ImagemModule } from './foto/imagem.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { SaldoModule } from './saldo/saldo.module';
     MatriculaModule,
     CategoriaModule,
     SaldoModule,
+    ImagemModule,
   ],
   controllers: [],
   providers: [],
