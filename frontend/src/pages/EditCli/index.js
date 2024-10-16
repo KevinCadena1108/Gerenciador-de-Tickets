@@ -1,34 +1,34 @@
-import React, { useEffect, useState, useContext } from 'react';
-import { Box, TextField, Grid, Button, MenuItem } from '@mui/material';
-import { FormControl, Select, Typography, InputLabel } from '@mui/material';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import Header from '../../components/Header';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider/LocalizationProvider';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { Link } from 'react-router-dom';
-import { ClientContext } from '../../context/ClientContext';
-import dayjs from 'dayjs';
-import SnackbarMensagem from '../../components/SnackbarMensagem';
+import React, { useEffect, useState, useContext } from "react";
+import { Box, TextField, Grid, Button, MenuItem } from "@mui/material";
+import { FormControl, Select, Typography, InputLabel } from "@mui/material";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import Header from "../../components/Header";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider/LocalizationProvider";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import { Link } from "react-router-dom";
+import { ClientContext } from "../../context/ClientContext";
+import dayjs from "dayjs";
+import SnackbarMensagem from "../../components/SnackbarMensagem";
 
 function EdiCli() {
   const { cpf: contextCpf } = useContext(ClientContext);
-  const [nome, setNome] = useState('');
-  const [cpf, setCpf] = useState('');
-  const [email, setEmail] = useState('');
-  const [telefone, setTelefone] = useState('');
-  const [senha, setSenha] = useState('');
-  const [matricula, setMatricula] = useState('');
-  const [categoria, setCategoria] = useState('');
+  const [nome, setNome] = useState("");
+  const [cpf, setCpf] = useState("");
+  const [email, setEmail] = useState("");
+  const [telefone, setTelefone] = useState("");
+  const [senha, setSenha] = useState("");
+  const [matricula, setMatricula] = useState("");
+  const [categoria, setCategoria] = useState("");
   const [categorias, setCategorias] = useState([]);
   const [nascimento, setNascimento] = useState(null);
   const navigate = useNavigate();
 
   const [isErroSnackbar, setIsErroSnackbar] = useState(false);
   const [isSnackbarAberto, setIsSnackbarAberto] = useState(false);
-  const [mensagemSnackbar, setMensagemSnackbar] = useState('');
+  const [mensagemSnackbar, setMensagemSnackbar] = useState("");
   const [carregouDados, setCarregouDados] = useState(false);
   const [carregouCategorias, setCarregouCategorias] = useState(false);
 
@@ -42,7 +42,7 @@ function EdiCli() {
   useEffect(() => {
     if (!contextCpf) {
       // Redireciona para a página de pesquisa se o CPF não estiver definido
-      navigate('/pesqcli');
+      navigate("/pesqcli");
       return;
     }
 
@@ -61,20 +61,23 @@ function EdiCli() {
         setCarregouDados(true);
       })
       .catch(() => {
-        abrirSnackbar('Não foi possível carregar os dados deste cliente!', true);
+        abrirSnackbar(
+          "Não foi possível carregar os dados deste cliente!",
+          true
+        );
       });
   }, [contextCpf, navigate]);
 
   // Carregar as categorias ao montar o componente
   useEffect(() => {
     axios
-      .get('http://localhost:3001/categoria') // Endpoint para buscar as categorias
+      .get("http://localhost:3001/categoria") // Endpoint para buscar as categorias
       .then((res) => {
         setCategorias(res.data);
         setCarregouCategorias(true);
       })
       .catch(() => {
-        abrirSnackbar('Não foi possível carregar as categorias!', true);
+        abrirSnackbar("Não foi possível carregar as categorias!", true);
       });
   }, []);
 
@@ -83,7 +86,7 @@ function EdiCli() {
       nome,
       email,
       telefone,
-      senha: senha === '' ? undefined : senha,
+      senha: senha === "" ? undefined : senha,
       numeroMatricula: matricula,
       idCategoria: categoria,
       //nascimento,
@@ -92,34 +95,40 @@ function EdiCli() {
     axios
       .put(`http://localhost:3001/cliente/${contextCpf}`, cliente) // Rota para atualizar os dados
       .then(() => {
-        abrirSnackbar('Informações do cliente editadas com sucesso!', false);
+        abrirSnackbar("Informações do cliente editadas com sucesso!", false);
         setTimeout(() => {
-          navigate('/pesqcli'); // Redireciona para a página de pesquisa após a edição
+          navigate("/pesqcli"); // Redireciona para a página de pesquisa após a edição
         }, 500); // Atraso de 2 segundos
       })
       .catch(() => {
-        abrirSnackbar('Ocorreu um erro ao editar as informações do cliente!', true);
+        abrirSnackbar(
+          "Ocorreu um erro ao editar as informações do cliente!",
+          true
+        );
       });
   };
 
   return (
     <Box>
       <Header />
-      <Grid container alignItems="center" sx={{ marginTop: '20px' }}>
+      <Grid container alignItems="center" sx={{ marginTop: "20px" }}>
         <Grid item xs>
-          <Typography variant="h5" sx={{ textAlign: 'center', marginLeft: '25px' }}>
+          <Typography
+            variant="h5"
+            sx={{ textAlign: "center", marginLeft: "25px" }}
+          >
             Editar Cliente
           </Typography>
         </Grid>
         <Grid item>
           <Link to="/pesqcli">
-            <ArrowBackIcon sx={{ color: 'black', marginRight: '25px' }} />
+            <ArrowBackIcon sx={{ color: "black", marginRight: "25px" }} />
           </Link>
         </Grid>
       </Grid>
-      <Box sx={{ marginTop: '20px', marginLeft: '20px', marginRight: '20px' }}>
+      <Box sx={{ marginTop: "20px", marginLeft: "20px", marginRight: "20px" }}>
         <Grid container spacing={2}>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={6}>
             <TextField
               fullWidth
               label="Nome completo"
@@ -129,10 +138,17 @@ function EdiCli() {
               onChange={(e) => setNome(e.target.value)}
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField fullWidth label="CPF" variant="outlined" name="cpf" value={cpf} disabled />
+          <Grid item xs={6}>
+            <TextField
+              fullWidth
+              label="CPF"
+              variant="outlined"
+              name="cpf"
+              value={cpf}
+              disabled
+            />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={6}>
             <TextField
               fullWidth
               label="Email"
@@ -143,7 +159,7 @@ function EdiCli() {
               type="email"
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={6}>
             <TextField
               fullWidth
               label="Telefone"
@@ -153,7 +169,7 @@ function EdiCli() {
               onChange={(e) => setTelefone(e.target.value)}
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={6}>
             <TextField
               fullWidth
               label="Senha"
@@ -164,7 +180,7 @@ function EdiCli() {
               type="password"
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={6}>
             <TextField
               fullWidth
               label="Matrícula"
@@ -174,15 +190,15 @@ function EdiCli() {
               onChange={(e) => setMatricula(e.target.value)}
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
-            <FormControl sx={{ width: '220px' }}>
+          <Grid item xs={2}>
+            <FormControl fullWidth>
               <InputLabel id="categoria-label">Categoria</InputLabel>
               <Select
                 labelId="demo-select-small-label"
                 id="demo-select-small"
                 label="Categoria"
                 defaultValue=""
-                value={categoria || ''}
+                value={categoria || ""}
                 onChange={(e) => setCategoria(e.target.value)}
               >
                 {categorias.map((cat) => (
@@ -192,17 +208,25 @@ function EdiCli() {
                 ))}
               </Select>
             </FormControl>
-            <FormControl sx={{ width: '220px', marginLeft:"20px" }}>
-            <InputLabel id="demo-select-small-label">Administrador</InputLabel>
-            <Select
-              labelId="demo-select-small-label"
-              id="demo-select-small"
-              label="Administrador"
-            >
-              <MenuItem value="sim">Sim</MenuItem>
-              <MenuItem value="nao">Não</MenuItem>
-            </Select>
-          </FormControl>
+          </Grid>
+
+          <Grid item xs={2}>
+            <FormControl fullWidth>
+              <InputLabel id="demo-select-small-label">
+                Administrador
+              </InputLabel>
+              <Select
+                labelId="demo-select-small-label"
+                id="demo-select-small"
+                label="Administrador"
+              >
+                <MenuItem value="sim">Sim</MenuItem>
+                <MenuItem value="nao">Não</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+
+          <Grid item xs={2}>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
                 label="Data de nascimento"
@@ -210,11 +234,11 @@ function EdiCli() {
                 onChange={(newDate) => setNascimento(newDate)}
                 disabled
                 format="DD/MM/YYYY"
-                sx={{ marginLeft: '20px' }}
               />
             </LocalizationProvider>
           </Grid>
-          <Grid item xs={12} sm={6}>
+
+          <Grid item xs={2} marginTop={"auto"} marginBottom={"auto"}>
             <Button variant="contained" color="primary" onClick={handleSubmit}>
               Editar
             </Button>

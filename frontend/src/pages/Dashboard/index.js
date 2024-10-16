@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, Typography, Grid } from "@mui/material";
 import { Link } from "react-router-dom";
 import Header from "../../components/Header";
 import Caixa from "../../components/Caixa";
@@ -12,7 +12,7 @@ function Dashboard() {
   const buttonStyle = {
     width: "230px",
     color: "primary",
-    marginTop: "70px",
+    marginTop: "40px",
   };
 
   return (
@@ -21,44 +21,46 @@ function Dashboard() {
       <Box sx={{ textAlign: "center", marginTop: "20px" }}>
         <Typography variant="h5"> Dashboard </Typography>
       </Box>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          marginTop: "-150px",
-        }}
+      <Grid
+        container
+        spacing={2}
+        justifyContent="center"
+        sx={{ marginTop: "auto" }}
       >
         {isAdmin && (
-          <Caixa>
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "flex-start",
-                height: "100%",
-                textAlign: "center",
-              }}
-            >
-              <Link to="/pesqcli">
-                <Button variant="contained" sx={buttonStyle}>
-                  Pesquisar Cliente
-                </Button>
-              </Link>
-              <Link to="/cadaluno">
-                <Button variant="contained" sx={buttonStyle}>
-                  Cadastrar Cliente
-                </Button>
-              </Link>
-            </Box>
-          </Caixa>
+          <Grid item>
+            <Caixa>
+              <Grid
+                container
+                direction="column"
+                alignItems="center"
+                spacing={2}
+                sx={{ marginTop: "-50px" }}
+              >
+                <Grid item>
+                  <Link to="/pesqcli">
+                    <Button variant="contained" sx={buttonStyle}>
+                      Pesquisar Cliente
+                    </Button>
+                  </Link>
+                </Grid>
+                <Grid item>
+                  <Link to="/cadaluno">
+                    <Button variant="contained" sx={buttonStyle}>
+                      Cadastrar Cliente
+                    </Button>
+                  </Link>
+                </Grid>
+              </Grid>
+            </Caixa>
+          </Grid>
         )}
-
-        <Caixa sx={{ marginLeft: "30px" }}>
-          <AdicionarSaldo />
-        </Caixa>
-      </Box>
+        <Grid item>
+          <Caixa>
+            <AdicionarSaldo />
+          </Caixa>
+        </Grid>
+      </Grid>
     </Box>
   );
 }

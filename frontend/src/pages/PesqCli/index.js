@@ -133,7 +133,7 @@ function PesqCli() {
       <Box sx={{ textAlign: 'center', marginTop: '20px' }}>
         <Typography variant="h5">Pesquisar Cliente</Typography>
       </Box>
-      <Box sx={{ marginTop: '20px', marginLeft: '20px' }}>
+          <Box sx={{ marginTop: '20px', marginLeft: '20px' }}>
         <Grid container spacing={3}>
           <Grid item xs="auto">
             <FormControl sx={{ width: '200px' }}>
@@ -160,7 +160,7 @@ function PesqCli() {
               onChange={(v) => setDadosPesquisa(v.target.value)}
             />
           </Grid>
-          <Grid item xs sx={{ margin: 'auto' }}>
+          <Grid item xs="auto" sx={{ display: 'flex', alignItems: 'center' }}>
             <Button variant="contained" color="primary" sx={{ marginRight: 2 }} onClick={() => pesquisar()}>
               Pesquisar
             </Button>
@@ -171,64 +171,67 @@ function PesqCli() {
         </Grid>
       </Box>
 
-      <Box sx={{ marginTop: '20px' }}>
-        <TableContainer component={Paper} sx={{ maxHeight: 515, overflowY: 'auto' }}>
-          <Table stickyHeader sx={{ minWidth: 450 }} aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell>Nome</TableCell>
-                <TableCell>CPF</TableCell>
-                <TableCell>Email</TableCell>
-                <TableCell>Telefone</TableCell>
-                <TableCell>Nascimento</TableCell>
-                <TableCell>Matrícula</TableCell>
-                <TableCell>Categoria</TableCell>
-                <TableCell>Saldo</TableCell>
-                <TableCell align="right">Ações</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {dados &&
-                dados.map((row) => (
-                  <TableRow key={row.cpf} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-                    <TableCell component="th" scope="row">
-                      {row.nome}
-                    </TableCell>
-                    <TableCell>{row.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4')}</TableCell>
-                    <TableCell>{row.email}</TableCell>
-                    <TableCell>{row.telefone}</TableCell>
-                    <TableCell>{new Date(row.nascimento).toLocaleDateString()}</TableCell>
-                    <TableCell>{formatarMatricula(row.matricula)}</TableCell>
-                    <TableCell>{row.categoria.nome}</TableCell>
-                    <TableCell>R${row.saldo}</TableCell>
-                    <TableCell align="right">
-                      <Link to="/editcli">
-                        <EditIcon
-                          sx={{ marginRight: 1 }}
-                          style={{ color: 'black', cursor: 'pointer' }}
-                          onClick={() => handleEditClick(row.cpf)}
-                        />
-                      </Link>
-            
-                      <Link>
-                        {row.matricula.isAtivo ? (
-                          <LockIcon
-                            style={{ color: 'black', cursor: 'pointer' }}
-                            onClick={() => handleClickOpen(row)}
-                          />
-                        ) : (
-                          <LockOpenIcon
-                            style={{ color: 'black', cursor: 'pointer' }}
-                            onClick={() => handleClickOpen(row)}
-                          />
-                        )}
-                      </Link>
-                    </TableCell>
+           <Box sx={{ marginTop: '20px' }}>
+        <Grid container spacing={3}>
+          <Grid item xs={12}>
+            <TableContainer component={Paper} sx={{ maxHeight: 515, overflowY: 'auto' }}>
+              <Table stickyHeader sx={{ minWidth: 450 }} aria-label="simple table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Nome</TableCell>
+                    <TableCell>CPF</TableCell>
+                    <TableCell>Email</TableCell>
+                    <TableCell>Telefone</TableCell>
+                    <TableCell>Nascimento</TableCell>
+                    <TableCell>Matrícula</TableCell>
+                    <TableCell>Categoria</TableCell>
+                    <TableCell>Saldo</TableCell>
+                    <TableCell align="right">Ações</TableCell>
                   </TableRow>
-                ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+                </TableHead>
+                <TableBody>
+                  {dados &&
+                    dados.map((row) => (
+                      <TableRow key={row.cpf} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                        <TableCell component="th" scope="row">
+                          {row.nome}
+                        </TableCell>
+                        <TableCell>{row.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4')}</TableCell>
+                        <TableCell>{row.email}</TableCell>
+                        <TableCell>{row.telefone}</TableCell>
+                        <TableCell>{new Date(row.nascimento).toLocaleDateString()}</TableCell>
+                        <TableCell>{formatarMatricula(row.matricula)}</TableCell>
+                        <TableCell>{row.categoria.nome}</TableCell>
+                        <TableCell>R${row.saldo}</TableCell>
+                        <TableCell align="right">
+                          <Link to="/editcli">
+                            <EditIcon
+                              sx={{ marginRight: 1 }}
+                              style={{ color: 'black', cursor: 'pointer' }}
+                              onClick={() => handleEditClick(row.cpf)}
+                            />
+                          </Link>
+                          <Link>
+                            {row.matricula.isAtivo ? (
+                              <LockIcon
+                                style={{ color: 'black', cursor: 'pointer' }}
+                                onClick={() => handleClickOpen(row)}
+                              />
+                            ) : (
+                              <LockOpenIcon
+                                style={{ color: 'black', cursor: 'pointer' }}
+                                onClick={() => handleClickOpen(row)}
+                              />
+                            )}
+                          </Link>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Grid>
+        </Grid>
       </Box>
 
       <Box>
