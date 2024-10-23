@@ -5,6 +5,7 @@ import Header from "../../components/Header";
 import Caixa from "../../components/Caixa";
 import AdicionarSaldo from "../../components/AdicionarSaldo";
 import { useAuth } from "../../components/Auth/AuthProvider";
+import SaldoTotal from "../../components/SaldoTotal";
 
 function Dashboard() {
   const { isAdmin } = useAuth();
@@ -18,9 +19,11 @@ function Dashboard() {
   return (
     <Box>
       <Header />
+
       <Box sx={{ textAlign: "center", marginTop: "20px" }}>
         <Typography variant="h5"> Dashboard </Typography>
       </Box>
+
       <Grid
         container
         spacing={2}
@@ -60,6 +63,11 @@ function Dashboard() {
             <AdicionarSaldo />
           </Caixa>
         </Grid>
+
+        <Grid item>
+            <SaldoTotal />
+        </Grid>
+        
       </Grid>
     </Box>
   );

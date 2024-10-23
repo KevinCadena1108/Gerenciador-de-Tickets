@@ -30,22 +30,17 @@ function AdicionarSaldo() {
         }}
       >
         <TextField
-          label="Quantidade"
-          type="number"
-          sx={{ marginBottom: "20px", width: "250px" }}
-        />
-        <TextField
+          fullWidth
           label="Valor Total"
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">R$</InputAdornment>
             ),
           }}
-          sx={{ width: "250px" }}
         />
       </Box>
       <Button variant="contained" color="primary" sx={{ marginTop: "20px" }}>
-        Comprar
+        Adicionar
       </Button>
     </Box>
   );
