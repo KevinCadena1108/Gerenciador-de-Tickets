@@ -34,7 +34,6 @@ function CadAluno() {
   const [selectedImage, setSelectedImage] = useState(null);
 
   const abrirMensagem = (msg, isError) => {
-    console.log('abrind omensagem');
     setMensagem(msg);
     setIsOpen(true);
     setIsError(isError);
@@ -50,6 +49,7 @@ function CadAluno() {
     setMatricula('');
     setNascimento(null);
     setRawNascimento(null);
+    setSelectedImage(null);
   };
 
   useEffect(() => {
@@ -70,12 +70,16 @@ function CadAluno() {
 
   const cadastroCli = async () => {
     try {
+      if (!selectedImage) {
+        abrirMensagem('Imagem não selecionada.', true);
+        return;
+      }
+
       if (checkData()) {
         abrirMensagem('Data de nascimento inválida.', true);
         return;
       }
       const administrador = Boolean(isAdministrador);
-
 
       // Enviar os dados ao backend
       await axios.post('http://localhost:3001/cliente', {
@@ -120,12 +124,11 @@ function CadAluno() {
     formData.append('file', selectedImage);
 
     try {
-      await axios.post('http://localhost:3001/imagem/upload', formData, {
+      await axios.post(`http://localhost:3001/imagem/upload/${cpf}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-      //abrirMensagem('Imagem enviada com sucesso.', false);
       handleClose();
     } catch (error) {
       abrirMensagem('Erro ao enviar a imagem.', true);
@@ -251,12 +254,12 @@ function CadAluno() {
               />
             </Link>
           </Grid>
-        <Box sx={{marginLeft: "auto", marginTop: "auto", marginBottom:"auto"}}>
-          <Grid item xs={2}>
-            <Button variant="contained" color="primary" onClick={cadastroCli} >
-              Cadastrar
-            </Button>
-          </Grid>
+          <Box sx={{ marginLeft: 'auto', marginTop: 'auto', marginBottom: 'auto' }}>
+            <Grid item xs={2}>
+              <Button variant="contained" color="primary" onClick={cadastroCli}>
+                Cadastrar
+              </Button>
+            </Grid>
           </Box>
         </Grid>
       </Box>

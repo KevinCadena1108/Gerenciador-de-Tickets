@@ -1,15 +1,14 @@
-import { Controller, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Controller, Param, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ImagemService } from './imagem.service';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 
-
 @Controller('imagem')
 export class ImagemController {
   constructor(private readonly imagemService: ImagemService) {}
 
-  @Post('upload')
+  @Post('upload/:cpf')
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
@@ -23,7 +22,7 @@ export class ImagemController {
       }),
     }),
   )
-  uploadFile(@UploadedFile() file: Express.Multer.File) {
-    return this.imagemService.saveImage(file);
+  async uploadFile(@Param('cpf') cpf: string, @UploadedFile() file: Express.Multer.File) {
+    return await this.imagemService.saveImage(cpf, file);
   }
 }

@@ -1,19 +1,18 @@
-import React from "react";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
+import React from 'react';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 
-function AdicionarSaldo({ children, width = 180, height = 100, sx = {} }) {
-  const totalSaldo = 100000;
+function AdicionarSaldo({ width = 180, height = 100, sx = {}, totalSaldo }) {
   return (
     <div>
       <Box
         sx={{
           width,
           height,
-          color: "white",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
+          color: 'white',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
           borderRadius: 2,
           boxShadow: 3,
           ...sx,
@@ -22,13 +21,13 @@ function AdicionarSaldo({ children, width = 180, height = 100, sx = {} }) {
         <Typography
           variant="h6"
           sx={{
-            color: "black",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
+            color: 'black',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
           }}
         >
-          Saldo Total:
+          Saldo total:
           <span>R$ {totalSaldo}</span>
         </Typography>
       </Box>

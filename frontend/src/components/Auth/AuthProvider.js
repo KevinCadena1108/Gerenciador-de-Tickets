@@ -1,5 +1,6 @@
-import { useContext, createContext, useState } from 'react';
+import { useContext, createContext, useState, useEffect } from 'react';
 import Cookies from 'universal-cookie';
+import { jwtDecode } from 'jwt-decode';
 
 const cookies = new Cookies();
 const AuthContext = createContext();
@@ -7,6 +8,14 @@ const AuthContext = createContext();
 const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(cookies.get('_auth') || '');
   const [isAdmin, setIsAdmin] = useState(cookies.get('_admin') || false);
+  const [cpf, setCpf] = useState('');
+
+  useEffect(() => {
+    if (!token) return;
+
+    const decodedToken = jwtDecode(token);
+    setCpf(decodedToken.cpf);
+  }, [token]);
 
   const updateToken = async (token, isAdmin) => {
     const cookiesConfig = {
@@ -28,7 +37,7 @@ const AuthProvider = ({ children }) => {
     cookies.remove('_admin');
   };
 
-  return <AuthContext.Provider value={{ token, isAdmin, updateToken, logOut }}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={{ token, isAdmin, cpf, updateToken, logOut }}>{children}</AuthContext.Provider>;
 };
 
 export default AuthProvider;
