@@ -17,6 +17,7 @@ model Cliente {
   nascimento      DateTime @db.Timestamp()
   saldo           Decimal  @default(0) @db.Decimal(10, 2)
   senha           String   @db.VarChar(145)
+  imagem          String?  @db.Text()
   isAdministrador Boolean  @default(false) @map("is_administrador") @db.Boolean()
   idCategoria     Int      @map("id_categoria")
   idMatricula     Int      @map("id_matricula")
