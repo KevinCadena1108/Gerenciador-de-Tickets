@@ -19,4 +19,10 @@ export class SaldoService {
     if (!newCliente) throw new BadRequestException('Ocorreu um erro ao atualizar o saldo!');
     return { saldo: newCliente.saldo };
   }
+
+  async getSaldo(cpf: string) {
+    const cliente = await this.clienteRepository.getOneByCPF(cpf);
+    if (!cliente) throw new NotFoundException('O CPF não foi encontrado');
+    return { saldo: cliente.saldo };
+  }
 }
