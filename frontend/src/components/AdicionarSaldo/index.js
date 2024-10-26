@@ -32,7 +32,8 @@ function AdicionarSaldo({ atualizarSaldo, abrirMensagem }) {
       abrirMensagem('Saldo adicionado com sucesso!', false);
     } catch (error) {
       console.error(error);
-      abrirMensagem('Erro ao adicionar saldo!', true);
+      const msg = error?.response?.data?.message || 'Erro ao adicionar saldo!';
+      abrirMensagem(msg, true);
       setBotaoAtivo(false);
     }
   };

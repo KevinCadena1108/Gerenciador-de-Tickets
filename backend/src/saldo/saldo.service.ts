@@ -7,11 +7,13 @@ export class SaldoService {
   constructor(private readonly clienteRepository: ClienteRepository) {}
 
   async addBalance(user: any, cpf: string, balance: number) {
-    const cliente = await this.clienteRepository.getOneByCPF(cpf);
+    if (user.cpf !== cpf) {
+      const userCliente = await this.clienteRepository.getOneByCPF(user.cpf);
+      if (!userCliente || !userCliente.isAdministrador) throw new UnauthorizedException();
+    }
 
-    if (!user.isAdministrador) throw new UnauthorizedException();
+    const cliente = await this.clienteRepository.getOneByCPF(cpf);
     if (!cliente) throw new NotFoundException('O CPF não foi encontrado');
-    if (user.cpf !== cpf) throw new UnauthorizedException();
 
     const newBalance = cliente.saldo.add(balance);
     const newCliente = await this.clienteRepository.update({ saldo: newBalance }, { cpf });

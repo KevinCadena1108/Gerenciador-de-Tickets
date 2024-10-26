@@ -17,7 +17,6 @@ function Dashboard() {
   const [isError, setIsError] = useState(false);
 
   const abrirMensagem = (msg, isError) => {
-    console.log('abrind omensagem');
     setMensagem(msg);
     setIsOpen(true);
     setIsError(isError);
@@ -30,7 +29,7 @@ function Dashboard() {
       return;
     }
 
-    setTotalSaldo((prev) => prev + parseInt(saldoAdicionado));
+    setTotalSaldo((prev) => parseInt(prev) + parseInt(saldoAdicionado));
   };
 
   useEffect(() => {

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
-import { Box, Button, FormControl, Grid, InputLabel, MenuItem, Paper, Select, Table,  } from '@mui/material';
+import { Box, Button, FormControl, Grid, InputLabel, MenuItem, Paper, Select, Table } from '@mui/material';
 import { TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 import { TextField, Typography, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
@@ -19,7 +19,7 @@ const MetodoPesquisa = {
 
 function PesqCli() {
   const [dados, setDados] = useState([]);
-  const [metodoPesquisa, setMetodoPesquisa] = useState('');
+  const [metodoPesquisa, setMetodoPesquisa] = useState(MetodoPesquisa.NOME);
   const [dadosPesquisa, setDadosPesquisa] = useState('');
   const [open, setOpen] = useState(false);
   const [selectedClient, setSelectedClient] = useState(null);
@@ -29,8 +29,6 @@ function PesqCli() {
   const [isErroSnackbar, setIsErroSnackbar] = useState(false);
   const [mensagemSnackbar, setMensagemSnackbar] = useState('');
   const [isSnackbarAberto, setIsSnackbarAberto] = useState(false);
-
-
 
   const mostrarMensagemSnackbar = (mensagem, erro) => {
     setIsErroSnackbar(erro);
@@ -89,8 +87,6 @@ function PesqCli() {
     setSelectedClient(null);
   };
 
-
-
   const mudarStatusMatricula = (status) => {
     if (selectedClient) {
       const matricula = selectedClient.matricula.matricula;
@@ -126,14 +122,13 @@ function PesqCli() {
     window.location.reload();
   };
 
-
   return (
     <Box>
       <Header />
       <Box sx={{ textAlign: 'center', marginTop: '20px' }}>
         <Typography variant="h5">Pesquisar Cliente</Typography>
       </Box>
-          <Box sx={{ marginTop: '20px', marginLeft: '20px' }}>
+      <Box sx={{ marginTop: '20px', marginLeft: '20px' }}>
         <Grid container spacing={3}>
           <Grid item xs="auto">
             <FormControl sx={{ width: '200px' }}>
@@ -171,7 +166,7 @@ function PesqCli() {
         </Grid>
       </Box>
 
-           <Box sx={{ marginTop: '20px' }}>
+      <Box sx={{ marginTop: '20px' }}>
         <Grid container spacing={3}>
           <Grid item xs={12}>
             <TableContainer component={Paper} sx={{ maxHeight: 515, overflowY: 'auto' }}>
@@ -258,9 +253,6 @@ function PesqCli() {
           </Button>
         </DialogActions>
       </Dialog>
-
-
-
     </Box>
   );
 }
