@@ -6,6 +6,7 @@ import {
   Query,
   UnauthorizedException,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -13,6 +14,8 @@ import { ImagemService } from './imagem.service';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { ConfigService } from '@nestjs/config';
+import { AdminGuard } from 'src/auth/guard/admin.guard';
+import { JwtGuard } from 'src/auth/guard/jwt.guard';
 
 @Controller('imagem')
 export class ImagemController {
@@ -22,6 +25,7 @@ export class ImagemController {
   ) {}
 
   @Post('upload/:cpf')
+  @UseGuards(JwtGuard, AdminGuard)
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
